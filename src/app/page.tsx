@@ -8,12 +8,14 @@ import { CalendarView } from '@/components/CalendarView';
 import { SecretariatTable } from '@/components/SecretariatTable';
 import { RoomsDirectory } from '@/components/RoomsDirectory';
 import { BookingModal } from '@/components/BookingModal';
+import { AuthModal } from '@/components/AuthModal';
+import { UsersManagement } from '@/components/UsersManagement';
 import { Sparkles, Calendar, BookOpen, Building2 } from 'lucide-react';
 
 export default function Home() {
   const { lang, t } = useLanguage();
 
-  const [activeTab, setActiveTab] = useState<'calendar' | 'logbook' | 'rooms'>('calendar');
+  const [activeTab, setActiveTab] = useState<'calendar' | 'logbook' | 'rooms' | 'users'>('calendar');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [modalInitialRoomId, setModalInitialRoomId] = useState<number | null>(null);
@@ -182,6 +184,10 @@ export default function Home() {
                 onSelectRoomForBooking={handleSelectRoomForBooking}
               />
             )}
+
+            {activeTab === 'users' && (
+              <UsersManagement />
+            )}
           </>
         )}
 
@@ -199,6 +205,9 @@ export default function Home() {
         initialDate={selectedDate}
         initialStartTime={modalInitialStartTime}
       />
+
+      {/* Login & Registration Modal */}
+      <AuthModal />
 
     </div>
   );

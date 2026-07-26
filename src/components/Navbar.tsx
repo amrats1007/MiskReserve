@@ -2,11 +2,12 @@
 
 import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { Calendar, BookOpen, Building2, Plus, Printer, Globe, Sparkles, Layers } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { Calendar, BookOpen, Building2, Plus, Printer, Globe, LogIn, LogOut, UserCheck, ShieldCheck, User } from 'lucide-react';
 
 interface NavbarProps {
-  activeTab: 'calendar' | 'logbook' | 'rooms';
-  setActiveTab: (tab: 'calendar' | 'logbook' | 'rooms') => void;
+  activeTab: 'calendar' | 'logbook' | 'rooms' | 'users';
+  setActiveTab: (tab: 'calendar' | 'logbook' | 'rooms' | 'users') => void;
   onOpenBookingModal: () => void;
   onPrintLogbook: () => void;
 }
@@ -18,6 +19,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onPrintLogbook
 }) => {
   const { lang, setLang, t } = useLanguage();
+  const { user, openAuthModal, logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-40 w-full glass-panel border-b border-slate-200/80 backdrop-blur-2xl">
@@ -48,7 +50,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <nav className="hidden md:flex items-center gap-1.5 bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200">
             <button
               onClick={() => setActiveTab('calendar')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${
                 activeTab === 'calendar'
                   ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/25'
                   : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-200/60'
@@ -60,7 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setActiveTab('logbook')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${
                 activeTab === 'logbook'
                   ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/25'
                   : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-200/60'
@@ -72,7 +74,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <button
               onClick={() => setActiveTab('rooms')}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 ${
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${
                 activeTab === 'rooms'
                   ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/25'
                   : 'text-slate-600 hover:text-indigo-600 hover:bg-slate-200/60'
@@ -81,36 +83,66 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Building2 className="w-4 h-4" />
               {t.nav.rooms}
             </button>
+
+            {/* Admin Users Approval Tab */}
+            {user && user.role === 'admin' && (
+              <button
+                onClick={() => setActiveTab('users')}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 ${
+                  activeTab === 'users'
+                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/25'
+                    : 'text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200'
+                }`}
+              >
+                <ShieldCheck className="w-4 h-4 text-amber-600" />
+                <span>إدارة الحسابات</span>
+              </button>
+            )}
           </nav>
 
           {/* Right Action Buttons */}
-          <div className="flex items-center gap-3">
-            {/* Print Logbook */}
-            <button
-              onClick={onPrintLogbook}
-              className="hidden lg:flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-semibold transition-all hover:text-indigo-600 hover:border-indigo-300 shadow-xs"
-              title={t.nav.printLogbook}
-            >
-              <Printer className="w-4 h-4 text-indigo-600" />
-              <span>{t.nav.printLogbook}</span>
-            </button>
+          <div className="flex items-center gap-2.5">
+            {/* User State / Login Trigger */}
+            {user ? (
+              <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 p-1.5 pr-3 rounded-2xl">
+                <div className="flex flex-col text-right">
+                  <span className="text-xs font-bold text-slate-900 truncate max-w-[120px]">{user.name}</span>
+                  <span className="text-[10px] text-indigo-600 font-semibold">{user.entity_name}</span>
+                </div>
+                <button
+                  onClick={logout}
+                  className="p-1.5 rounded-xl hover:bg-rose-50 text-slate-400 hover:text-rose-600 transition-all"
+                  title="تسجيل الخروج"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => openAuthModal('login')}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold transition-all hover:border-indigo-300 hover:text-indigo-600 shadow-xs"
+              >
+                <LogIn className="w-4 h-4 text-indigo-600" />
+                <span>دخول / تسجيل</span>
+              </button>
+            )}
 
             {/* Language Switcher */}
             <button
               onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')}
-              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold transition-all hover:border-indigo-300 hover:text-indigo-600 shadow-xs"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold transition-all hover:border-indigo-300 hover:text-indigo-600 shadow-xs"
             >
               <Globe className="w-4 h-4 text-indigo-600" />
-              <span>{lang === 'ar' ? 'English' : 'عربي'}</span>
+              <span>{lang === 'ar' ? 'EN' : 'عربي'}</span>
             </button>
 
             {/* New Reservation Trigger */}
             <button
               onClick={onOpenBookingModal}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white text-xs font-extrabold shadow-md shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.03] active:scale-[0.97] transition-all"
+              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white text-xs font-extrabold shadow-md shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.03] active:scale-[0.97] transition-all"
             >
               <Plus className="w-4 h-4 stroke-[3]" />
-              <span>{t.nav.newBooking}</span>
+              <span className="hidden sm:inline">{t.nav.newBooking}</span>
             </button>
           </div>
 
@@ -145,6 +177,17 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Building2 className="w-3.5 h-3.5" />
             {t.nav.rooms}
           </button>
+          {user && user.role === 'admin' && (
+            <button
+              onClick={() => setActiveTab('users')}
+              className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-lg ${
+                activeTab === 'users' ? 'bg-indigo-600 text-white' : 'text-amber-700'
+              }`}
+            >
+              <ShieldCheck className="w-3.5 h-3.5" />
+              الحسابات
+            </button>
+          )}
         </div>
 
       </div>

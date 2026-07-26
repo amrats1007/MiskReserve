@@ -1,8 +1,31 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
+import { hashPassword } from '@/lib/auth';
 
 export async function GET() {
   try {
+    // 0. Create users table
+    await sql`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(150) NOT NULL,
+        email VARCHAR(150) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        entity_name VARCHAR(150) DEFAULT 'شركة مسك',
+        phone VARCHAR(50),
+        role VARCHAR(20) DEFAULT 'user',
+        status VARCHAR(20) DEFAULT 'pending',
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    // Add status column if table exists without it
+    try {
+      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'pending';`;
+    } catch (e) {
+      // Ignore if column already exists
+    }
+
     // 1. Create rooms table
     await sql`
       CREATE TABLE IF NOT EXISTS rooms (
@@ -41,6 +64,16 @@ export async function GET() {
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `;
+
+    // Seed default Admin User if users table is empty
+    const existingUsers = await sql`SELECT COUNT(*) as count FROM users;`;
+    if (parseInt(existingUsers[0].count) === 0) {
+      const defaultAdminPass = hashPassword('admin123');
+      await sql`
+        INSERT INTO users (name, email, password_hash, entity_name, phone, role, status) VALUES
+        ('مدير مسك رومز', 'admin@misktech.com', ${defaultAdminPass}, 'إدارة نظم المعلومات', '0500000000', 'admin', 'approved');
+      `;
+    }
 
     // 3. Seed Rooms if empty
     const existingRooms = await sql`SELECT COUNT(*) as count FROM rooms;`;

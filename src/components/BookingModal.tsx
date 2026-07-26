@@ -25,6 +25,8 @@ interface BookingModalProps {
   initialStartTime?: string | null;
 }
 
+import { useAuth } from '@/context/AuthContext';
+
 export const BookingModal: React.FC<BookingModalProps> = ({
   isOpen,
   onClose,
@@ -35,10 +37,11 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   initialStartTime
 }) => {
   const { lang, t } = useLanguage();
+  const { user } = useAuth();
 
   const [roomId, setRoomId] = useState<number>(initialRoomId || (rooms[0]?.id || 1));
-  const [bookerName, setBookerName] = useState('');
-  const [entityName, setEntityName] = useState('');
+  const [bookerName, setBookerName] = useState(user?.name || '');
+  const [entityName, setEntityName] = useState(user?.entity_name || '');
   const [eventTitle, setEventTitle] = useState('');
   const [eventType, setEventType] = useState('meeting');
   const [bookingDate, setBookingDate] = useState(initialDate || new Date().toISOString().split('T')[0]);
@@ -51,6 +54,13 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [conflictWarning, setConflictWarning] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      if (!bookerName) setBookerName(user.name);
+      if (!entityName) setEntityName(user.entity_name);
+    }
+  }, [user, isOpen]);
 
   useEffect(() => {
     if (initialRoomId) setRoomId(initialRoomId);

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Tajawal, Inter } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { AuthProvider } from "@/context/AuthContext";
 
 const tajawal = Tajawal({
   subsets: ["arabic", "latin"],
@@ -30,9 +31,11 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={`${tajawal.variable} ${inter.variable}`}>
       <body className="antialiased selection:bg-indigo-500 selection:text-white">
-        <LanguageProvider>
-          {children}
-        </LanguageProvider>
+        <AuthProvider>
+          <LanguageProvider>
+            {children}
+          </LanguageProvider>
+        </AuthProvider>
       </body>
     </html>
   );
