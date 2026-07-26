@@ -106,8 +106,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Action Buttons */}
           <div className="flex items-center gap-2.5">
-            {/* User State / Login Trigger */}
-            {user ? (
+            {/* User Profile Badge (when logged in) */}
+            {user && (
               <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 p-1.5 pr-3 rounded-2xl">
                 <div className="flex flex-col text-right">
                   <span className="text-xs font-bold text-slate-900 truncate max-w-[120px]">{user.name}</span>
@@ -121,14 +121,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <LogOut className="w-4 h-4" />
                 </button>
               </div>
-            ) : (
-              <button
-                onClick={() => openAuthModal('login')}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold transition-all hover:border-indigo-300 hover:text-indigo-600 shadow-xs"
-              >
-                <LogIn className="w-4 h-4 text-indigo-600" />
-                <span>دخول / تسجيل</span>
-              </button>
             )}
 
             {/* Language Switcher */}
