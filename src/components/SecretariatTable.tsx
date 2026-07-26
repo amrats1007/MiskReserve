@@ -56,13 +56,13 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
     <div className="space-y-6">
       
       {/* Header & Controls */}
-      <div className="glass-panel p-6 rounded-3xl border border-indigo-500/20 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="glass-panel p-6 rounded-3xl border border-indigo-200 flex flex-col md:flex-row items-center justify-between gap-4 shadow-sm">
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Calendar className="w-6 h-6 text-indigo-400" />
+          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <Calendar className="w-6 h-6 text-indigo-600" />
             {t.logbook.title}
           </h2>
-          <p className="text-xs text-slate-400 mt-1">{t.logbook.subtitle}</p>
+          <p className="text-xs text-slate-500 mt-1">{t.logbook.subtitle}</p>
         </div>
 
         {/* Search & Filter Inputs */}
@@ -83,7 +83,7 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl glass-input text-xs bg-slate-900 text-white"
+            className="px-3 py-2 rounded-xl glass-input text-xs bg-white text-slate-900 border-slate-300"
           >
             <option value="all">{t.filter.allStatuses}</option>
             <option value="confirmed">{t.filter.confirmed}</option>
@@ -94,16 +94,16 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
           {/* Print Button */}
           <button
             onClick={onPrint}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-all"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 transition-all hover:border-indigo-300 hover:text-indigo-600 shadow-xs"
           >
-            <Printer className="w-4 h-4 text-indigo-400" />
+            <Printer className="w-4 h-4 text-indigo-600" />
             <span>{t.nav.printLogbook}</span>
           </button>
         </div>
       </div>
 
       {/* Logbook Table Card */}
-      <div className="glass-panel rounded-3xl p-6 border border-slate-700/60 overflow-hidden">
+      <div className="glass-panel rounded-3xl p-6 border border-slate-200 overflow-hidden shadow-sm">
         
         {/* Printable Header Title */}
         <div className="hidden print-only text-center mb-6">
@@ -113,7 +113,7 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
 
         <div className="overflow-x-auto">
           <table className="w-full text-right text-xs">
-            <thead className="bg-slate-900/80 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-700/60">
+            <thead className="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider border-b border-slate-200">
               <tr>
                 <th className="p-3">{t.logbook.tableHeader.id}</th>
                 <th className="p-3">{t.logbook.tableHeader.date}</th>
@@ -127,11 +127,11 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
                 <th className="p-3 text-center no-print">{t.logbook.tableHeader.actions}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 font-medium">
+            <tbody className="divide-y divide-slate-200 font-medium">
               {filteredBookings.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="p-8 text-center text-slate-500">
-                    <AlertCircle className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+                  <td colSpan={10} className="p-8 text-center text-slate-400">
+                    <AlertCircle className="w-8 h-8 text-slate-400 mx-auto mb-2" />
                     {t.logbook.noData}
                   </td>
                 </tr>
@@ -140,38 +140,38 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
                   const roomName = lang === 'ar' ? b.room_name_ar : b.room_name_en;
 
                   return (
-                    <tr key={b.id} className="hover:bg-slate-800/40 transition-colors">
+                    <tr key={b.id} className="hover:bg-slate-50/90 transition-colors">
                       <td className="p-3 font-mono text-slate-400">{idx + 1}</td>
-                      <td className="p-3 whitespace-nowrap font-mono text-indigo-300">
+                      <td className="p-3 whitespace-nowrap font-mono text-indigo-700 font-semibold">
                         {new Date(b.booking_date).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US')}
                       </td>
-                      <td className="p-3 whitespace-nowrap font-mono text-slate-200">
+                      <td className="p-3 whitespace-nowrap font-mono text-slate-700">
                         {b.start_time.substring(0, 5)} - {b.end_time.substring(0, 5)}
                       </td>
-                      <td className="p-3 font-bold text-white whitespace-nowrap">
+                      <td className="p-3 font-bold text-slate-900 whitespace-nowrap">
                         <span
                           className="inline-block w-2.5 h-2.5 rounded-full ml-1.5"
                           style={{ backgroundColor: b.room_color || '#6366f1' }}
                         />
                         {roomName || `قاعة #${b.room_id}`}
                       </td>
-                      <td className="p-3 text-slate-200 font-semibold">{b.booker_name}</td>
-                      <td className="p-3 text-indigo-200">{b.entity_name}</td>
-                      <td className="p-3 text-white max-w-xs truncate">{b.event_title}</td>
-                      <td className="p-3 text-center font-mono text-slate-300">{b.attendees_count}</td>
+                      <td className="p-3 text-slate-800 font-semibold">{b.booker_name}</td>
+                      <td className="p-3 text-indigo-700">{b.entity_name}</td>
+                      <td className="p-3 text-slate-900 max-w-xs truncate font-medium">{b.event_title}</td>
+                      <td className="p-3 text-center font-mono text-slate-600">{b.attendees_count}</td>
                       <td className="p-3 whitespace-nowrap">
                         {b.status === 'confirmed' && (
-                          <span className="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">
+                          <span className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-bold">
                             ✔ {t.filter.confirmed}
                           </span>
                         )}
                         {b.status === 'pending' && (
-                          <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[10px] font-bold">
+                          <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300 text-[10px] font-bold">
                             ⏳ {t.filter.pending}
                           </span>
                         )}
                         {b.status === 'cancelled' && (
-                          <span className="px-2.5 py-1 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-bold">
+                          <span className="px-2.5 py-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300 text-[10px] font-bold">
                             ✖ {t.filter.cancelled}
                           </span>
                         )}
@@ -181,7 +181,7 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
                           {b.status !== 'confirmed' && (
                             <button
                               onClick={() => onStatusChange(b.id, 'confirmed')}
-                              className="p-1.5 rounded-lg bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 transition-all"
+                              className="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-600 transition-all"
                               title="تأكيد الحجز"
                             >
                               <CheckCircle className="w-4 h-4" />
@@ -190,7 +190,7 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
                           {b.status !== 'cancelled' && (
                             <button
                               onClick={() => onStatusChange(b.id, 'cancelled')}
-                              className="p-1.5 rounded-lg bg-amber-600/20 hover:bg-amber-600/40 text-amber-400 transition-all"
+                              className="p-1.5 rounded-lg bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-600 transition-all"
                               title="إلغاء الحجز"
                             >
                               <XCircle className="w-4 h-4" />
@@ -198,7 +198,7 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
                           )}
                           <button
                             onClick={() => onDeleteBooking(b.id)}
-                            className="p-1.5 rounded-lg bg-rose-600/20 hover:bg-rose-600/40 text-rose-400 transition-all"
+                            className="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 transition-all"
                             title="حذف من السجل"
                           >
                             <Trash2 className="w-4 h-4" />

@@ -127,20 +127,20 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
         
         {/* Banner Hero */}
-        <div className="relative glass-panel rounded-3xl p-6 sm:p-10 border border-indigo-500/20 overflow-hidden shadow-2xl">
-          <div className="absolute -right-20 -top-20 w-80 h-80 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative glass-panel rounded-3xl p-6 sm:p-10 border border-indigo-500/20 overflow-hidden shadow-lg">
+          <div className="absolute -right-20 -top-20 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
           
           <div className="relative z-10 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-semibold mb-4">
-              <Sparkles className="w-3.5 h-3.5" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold mb-4">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
               <span>{t.companyName}</span>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-white leading-tight">
+            <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 leading-tight">
               {t.hero.title}
             </h1>
-            <p className="text-sm sm:text-base text-slate-300 mt-3 leading-relaxed">
+            <p className="text-sm sm:text-base text-slate-600 mt-3 leading-relaxed">
               {t.hero.subtitle}
             </p>
           </div>
@@ -151,8 +151,8 @@ export default function Home() {
 
         {/* Main Content Area */}
         {loading ? (
-          <div className="glass-panel rounded-3xl p-12 text-center text-slate-400">
-            <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="glass-panel rounded-3xl p-12 text-center text-slate-600">
+            <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
             <p className="text-sm font-semibold">جاري تحميل سجل القاعات والبيانات...</p>
           </div>
         ) : (
