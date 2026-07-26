@@ -76,7 +76,7 @@ CREATE TABLE bookings (
 1. ربط المشروع بمستودع GitHub: `https://github.com/amrats1007/MiskReserve.git`
 2. إضافة متغّير البيئة (Environment Variable) على Vercel:
    - **Key**: `DATABASE_URL`
-   - **Value**: `postgresql://neondatabase_owner:npg_4kRYIDedXsO9@ep-soft-hall-a6af11b3-pooler.us-west-2.aws.neon.tech/neondb?channel_binding=require&sslmode=require`
+   - **Value**: `postgresql://neondb_owner:npg_4kRYIDedXsO9@ep-soft-hall-a6af11b3-pooler.us-west-2.aws.neon.tech/neondb?channel_binding=require&sslmode=require`
 3. سيقوم Vercel بالنشر التلقائي ومزامنة أحدث التغييرات فورا.
 
 ---
