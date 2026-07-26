@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
+import { checkAuthSession } from '@/lib/auth';
 
 export async function GET(request: Request) {
   try {
+    const auth = await checkAuthSession();
+    if (!auth.authenticated) {
+      return NextResponse.json({ success: false, message: 'غير مصرح الوصول إلا للحسابات المفعلة.' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const date = searchParams.get('date');
     const roomId = searchParams.get('room_id');
@@ -60,6 +66,11 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const auth = await checkAuthSession();
+    if (!auth.authenticated) {
+      return NextResponse.json({ success: false, message: 'غير مصرح بالحجز إلا للحسابات المسجلة والمفعلة.' }, { status: 401 });
+    }
+
     const body = await request.json();
     const {
       room_id,
@@ -106,7 +117,7 @@ export async function POST(request: Request) {
         event_title, event_type, booking_date, start_time, end_time,
         attendees_count, requested_equipment, notes, status
       ) VALUES (
-        ${parseInt(room_id)}, ${booker_name}, ${booker_email || null}, ${booker_phone || null}, ${entity_name},
+        ${parseInt(room_id)}, ${booker_name}, ${booker_email || auth.user?.email || null}, ${booker_phone || null}, ${entity_name},
         ${event_title}, ${event_type || 'meeting'}, ${booking_date}::date, ${start_time}::time, ${end_time}::time,
         ${parseInt(attendees_count) || 1}, ${JSON.stringify(requested_equipment || [])}::jsonb, ${notes || null}, 'confirmed'
       )
@@ -122,6 +133,11 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
+    const auth = await checkAuthSession();
+    if (!auth.authenticated) {
+      return NextResponse.json({ success: false, message: 'غير مصرح لك بإجراء هذا التعديل.' }, { status: 401 });
+    }
+
     const body = await request.json();
     const { id, status } = body;
 
@@ -144,6 +160,11 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const auth = await checkAuthSession();
+    if (!auth.authenticated) {
+      return NextResponse.json({ success: false, message: 'غير مصرح لك بحذف الحجز.' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 

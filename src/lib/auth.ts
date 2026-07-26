@@ -1,4 +1,6 @@
 import crypto from 'crypto';
+import { cookies } from 'next/headers';
+import { sql } from '@/lib/db';
 
 const SECRET_KEY = process.env.SESSION_SECRET || 'misk-reserve-super-secret-key-2026';
 
@@ -37,5 +39,26 @@ export function verifyToken(token: string): any | null {
     return JSON.parse(payloadStr);
   } catch (err) {
     return null;
+  }
+}
+
+// Helper to check valid approved session for API routes
+export async function checkAuthSession(): Promise<{ authenticated: boolean; user?: any }> {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get('misk_auth_session')?.value;
+    if (!token) return { authenticated: false };
+
+    const payload = verifyToken(token);
+    if (!payload || !payload.id) return { authenticated: false };
+
+    const users = await sql`SELECT id, name, email, entity_name, role, status FROM users WHERE id = ${payload.id};`;
+    if (users.length === 0 || users[0].status !== 'approved') {
+      return { authenticated: false };
+    }
+
+    return { authenticated: true, user: users[0] };
+  } catch (err) {
+    return { authenticated: false };
   }
 }
