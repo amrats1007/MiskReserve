@@ -1,31 +1,108 @@
 @import "tailwindcss";
 
+:root {
+  --bg: #07080B;
+  --glass: rgba(255, 255, 255, 0.035);
+  --glass-bright: rgba(255, 255, 255, 0.06);
+  --stroke: rgba(255, 255, 255, 0.09);
+  --stroke-bright: rgba(255, 255, 255, 0.18);
+  --text: #F4F5F7;
+  --text-dim: #A2A7B3;
+  --text-faint: #626772;
+  --blue: #7DA9FF;
+  --violet: #A78BFA;
+  --cyan: #67E8F9;
+  --green: #4ADE80;
+  --grad: linear-gradient(100deg, #7DA9FF 0%, #A78BFA 55%, #67E8F9 110%);
+}
+
 @layer base {
-  :root {
-    --font-tajawal: 'Tajawal', system-ui, sans-serif;
-    --font-inter: 'Inter', system-ui, sans-serif;
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
-    background-color: #f8fafc;
-    background-image: 
-      radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
-      radial-gradient(at 100% 0%, rgba(168, 85, 247, 0.08) 0px, transparent 50%),
-      radial-gradient(at 50% 100%, rgba(241, 245, 249, 0.8) 0px, transparent 50%);
-    background-attachment: fixed;
-    color: #0f172a;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: var(--font-tajawal), system-ui, sans-serif;
     min-height: 100vh;
-    font-family: var(--font-tajawal);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
 }
 
-/* Light Glassmorphism utility cards */
+/* ============================================================
+   Desktop Commander Ambient Background: Aurora & Grain
+   ============================================================ */
+.aurora {
+  position: fixed;
+  inset: -20%;
+  z-index: 0;
+  pointer-events: none;
+  filter: blur(100px) saturate(140%);
+  opacity: 0.45;
+}
+
+.aurora::before,
+.aurora::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+}
+
+.aurora::before {
+  width: 55vw;
+  height: 55vw;
+  left: 8%;
+  top: -12%;
+  background: radial-gradient(circle at 30% 30%, rgba(125, 169, 255, 0.5), transparent 65%);
+  animation: drift1 26s ease-in-out infinite alternate;
+}
+
+.aurora::after {
+  width: 45vw;
+  height: 45vw;
+  right: 2%;
+  top: 6%;
+  background: radial-gradient(circle at 60% 40%, rgba(167, 139, 250, 0.4), transparent 65%);
+  animation: drift2 32s ease-in-out infinite alternate;
+}
+
+@keyframes drift1 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(8vw, 6vh) scale(1.15); }
+}
+
+@keyframes drift2 {
+  0% { transform: translate(0, 0) scale(1.1); }
+  100% { transform: translate(-10vw, 10vh) scale(0.95); }
+}
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.15;
+  mix-blend-mode: overlay;
+}
+
+/* ============================================================
+   Desktop Commander Glassmorphism Utilities
+   ============================================================ */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(10, 11, 15, 0.65);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--stroke);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), inset 0 1px rgba(255, 255, 255, 0.08);
+}
+
+.glass-panel-bright {
+  background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+  border: 1px solid var(--stroke-bright);
 }
 
 .glass-panel-hover {
@@ -33,56 +110,135 @@
 }
 
 .glass-panel-hover:hover {
-  background: rgba(255, 255, 255, 0.98);
-  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(255, 255, 255, 0.055);
+  border-color: rgba(125, 169, 255, 0.35);
   transform: translateY(-3px);
-  box-shadow: 0 20px 35px -10px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 20px 40px -10px rgba(125, 169, 255, 0.15), 0 0 30px rgba(167, 139, 250, 0.1);
 }
 
 .glass-input {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  color: #0f172a;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text);
   transition: all 0.2s ease;
+}
+
+.glass-input::placeholder {
+  color: var(--text-faint);
 }
 
 .glass-input:focus {
   outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
-  background: #ffffff;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 4px rgba(125, 169, 255, 0.15);
+  background: rgba(255, 255, 255, 0.07);
 }
 
-/* Light text gradient utility */
-.gradient-text {
-  background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 50%, #6366f1 100%);
+/* Gradients */
+.gradient-text, .grad-text {
+  background: var(--grad);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .gradient-brand {
-  background: linear-gradient(135deg, #4f46e5 0%, #9333ea 50%, #db2777 100%);
+  background: linear-gradient(135deg, #7DA9FF 0%, #A78BFA 50%, #67E8F9 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-/* Custom Scrollbar */
+/* Green Live Dot & Pulsing Ring */
+.dot-live {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 10px var(--green);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.check-big {
+  width: 74px;
+  height: 74px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: rgba(74, 222, 128, 0.08);
+  border: 1px solid rgba(74, 222, 128, 0.4);
+  display: grid;
+  place-items: center;
+  position: relative;
+  box-shadow: 0 0 40px rgba(74, 222, 128, 0.2);
+}
+
+.check-big::before,
+.check-big::after {
+  content: "";
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 1px solid rgba(74, 222, 128, 0.25);
+  animation: ringPulse 2.8s ease-out infinite;
+}
+
+.check-big::after {
+  animation-delay: 1.4s;
+}
+
+@keyframes ringPulse {
+  0% { transform: scale(0.85); opacity: 0.9; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* Cloud Pills (Amenity Tags & Badges) */
+.cloud-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--stroke);
+  color: var(--text-dim);
+  transition: all 0.2s ease;
+}
+
+.cloud-pill.hl, .cloud-pill:hover {
+  background: rgba(125, 169, 255, 0.12);
+  border-color: rgba(125, 169, 255, 0.4);
+  color: var(--text);
+  box-shadow: 0 0 15px rgba(125, 169, 255, 0.15);
+}
+
+/* JetBrains Monospace Font for Codes and Badges */
+.font-mono {
+  font-family: var(--font-mono), 'JetBrains Mono', monospace !important;
+}
+
+/* Custom Dark Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(241, 245, 249, 0.8);
+  background: rgba(7, 8, 11, 0.8);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(99, 102, 241, 0.35);
+  background: rgba(125, 169, 255, 0.25);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(99, 102, 241, 0.65);
+  background: rgba(125, 169, 255, 0.5);
 }
 
 /* Print Styling for Secretariat Daily Schedule */
@@ -92,7 +248,7 @@
     color: #000000 !important;
   }
 
-  .no-print {
+  .aurora, .grain, .no-print {
     display: none !important;
   }
 

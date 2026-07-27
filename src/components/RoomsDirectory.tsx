@@ -23,12 +23,12 @@ interface RoomsDirectoryProps {
 }
 
 const EQUIPMENT_ICONS: Record<string, { labelAr: string; labelEn: string; icon: any }> = {
-  projector: { labelAr: 'جهاز عرض بروجكتور', labelEn: 'Projector', icon: Tv },
-  soundSystem: { labelAr: 'نظام صوتي ومايكروفون', labelEn: 'Sound System', icon: Mic },
+  projector: { labelAr: 'بروجكتور', labelEn: 'Projector', icon: Tv },
+  soundSystem: { labelAr: 'نظام صوتي', labelEn: 'Sound System', icon: Mic },
   whiteboard: { labelAr: 'سبورة تفاعلية', labelEn: 'Whiteboard', icon: Monitor },
   videoconf: { labelAr: 'فيديو كونفرانس', labelEn: 'Video Conf', icon: Video },
   hospitality: { labelAr: 'ضيافة ومشروبات', labelEn: 'Hospitality', icon: Coffee },
-  laptops: { labelAr: 'أجهزة أجهزة كمبيوتر', labelEn: 'Laptops', icon: Monitor },
+  laptops: { labelAr: 'أجهزة كمبيوتر', labelEn: 'Laptops', icon: Monitor },
 };
 
 export const RoomsDirectory: React.FC<RoomsDirectoryProps> = ({ rooms, onSelectRoomForBooking }) => {
@@ -37,12 +37,12 @@ export const RoomsDirectory: React.FC<RoomsDirectoryProps> = ({ rooms, onSelectR
   return (
     <div className="space-y-6">
       
-      <div className="glass-panel p-6 rounded-3xl border border-indigo-200 shadow-sm">
-        <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-          <Building2 className="w-6 h-6 text-indigo-600" />
+      <div className="glass-panel p-6 rounded-3xl border border-[var(--stroke)] shadow-2xl">
+        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+          <Building2 className="w-5 h-5 text-[#7DA9FF]" />
           {t.rooms.title}
         </h2>
-        <p className="text-xs text-slate-500 mt-1">دليل القاعات التدريبية والاجتماعات المتاحة بالشركة والتجهيزات التقنية المتاحة بكل قاعة</p>
+        <p className="text-xs text-[#A2A7B3] mt-1 font-sans">دليل القاعات التدريبية والاجتماعات المتاحة بالشركة والتجهيزات التقنية المتاحة بكل قاعة</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -53,44 +53,44 @@ export const RoomsDirectory: React.FC<RoomsDirectoryProps> = ({ rooms, onSelectR
           return (
             <div
               key={room.id}
-              className="glass-panel glass-panel-hover p-6 rounded-3xl border border-slate-200 flex flex-col justify-between shadow-sm"
+              className="glass-panel glass-panel-hover p-6 rounded-3xl border border-[var(--stroke)] flex flex-col justify-between shadow-2xl"
             >
               <div>
                 {/* Header */}
-                <div className="flex items-center justify-between pb-4 border-b border-slate-200">
+                <div className="flex items-center justify-between pb-4 border-b border-[var(--stroke)]">
                   <div className="flex items-center gap-3">
                     <div
-                      className="w-4 h-12 rounded-full"
-                      style={{ backgroundColor: room.color }}
+                      className="w-3.5 h-10 rounded-full shadow-[0_0_12px_currentColor]"
+                      style={{ backgroundColor: room.color, color: room.color }}
                     />
                     <div>
-                      <h3 className="text-lg font-bold text-slate-900">{name}</h3>
-                      <span className="text-xs text-indigo-600 font-mono font-semibold">
-                        كود: {room.code}
+                      <h3 className="text-lg font-bold text-white">{name}</h3>
+                      <span className="text-xs text-[#7DA9FF] font-mono">
+                        CODE: {room.code}
                       </span>
                     </div>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 text-xs font-bold">
-                    نشطة وجاهزة
+                  <span className="px-3 py-1 rounded-full bg-[rgba(74,222,128,0.1)] text-[#4ADE80] border border-[rgba(74,222,128,0.3)] font-mono text-xs font-bold">
+                    ● READY
                   </span>
                 </div>
 
                 {/* Meta details */}
-                <div className="grid grid-cols-2 gap-3 py-4 text-xs text-slate-600">
+                <div className="grid grid-cols-2 gap-3 py-4 text-xs font-mono text-[#A2A7B3]">
                   <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-indigo-600" />
-                    <span>السعة: {room.capacity} فرد</span>
+                    <Users className="w-4 h-4 text-[#7DA9FF]" />
+                    <span>CAPACITY: {room.capacity}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-indigo-600" />
+                    <MapPin className="w-4 h-4 text-[#7DA9FF]" />
                     <span>{loc}</span>
                   </div>
                 </div>
 
                 {/* Equipment Badges */}
                 <div className="pt-2">
-                  <h4 className="text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">
-                    التجهيزات التقنية المتوفرة بالقاعة:
+                  <h4 className="text-[11px] font-mono font-semibold text-[#626772] mb-2 uppercase tracking-wider">
+                    EQUIPMENT & AMENITIES:
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {(room.amenities || []).map((eq) => {
@@ -100,9 +100,9 @@ export const RoomsDirectory: React.FC<RoomsDirectoryProps> = ({ rooms, onSelectR
                       return (
                         <span
                           key={eq}
-                          className="px-2.5 py-1 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 text-[11px] font-medium flex items-center gap-1.5"
+                          className="cloud-pill hl"
                         >
-                          <CheckCircle className="w-3 h-3 text-indigo-600" />
+                          <CheckCircle className="w-3.5 h-3.5 text-[#4ADE80]" />
                           {label}
                         </span>
                       );
@@ -112,12 +112,12 @@ export const RoomsDirectory: React.FC<RoomsDirectoryProps> = ({ rooms, onSelectR
               </div>
 
               {/* Action */}
-              <div className="pt-6 mt-6 border-t border-slate-200">
+              <div className="pt-6 mt-6 border-t border-[var(--stroke)]">
                 <button
                   onClick={() => onSelectRoomForBooking(room.id)}
-                  className="w-full py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-600 border border-indigo-200 hover:border-indigo-600 text-indigo-700 hover:text-white text-xs font-bold transition-all shadow-xs hover:shadow-md"
+                  className="w-full py-3 rounded-xl bg-[rgba(255,255,255,0.05)] hover:bg-[#F4F5F7] border border-[var(--stroke)] hover:border-white text-white hover:text-[#07080B] text-xs font-bold transition-all shadow-lg hover:shadow-[0_0_25px_rgba(255,255,255,0.3)]"
                 >
-                  حجز هذه القاعة الآن
+                  حجز هذه القاعة الآن →
                 </button>
               </div>
 

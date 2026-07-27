@@ -11,7 +11,7 @@ import { RoomsDirectory } from '@/components/RoomsDirectory';
 import { BookingModal } from '@/components/BookingModal';
 import { AuthModal } from '@/components/AuthModal';
 import { UsersManagement } from '@/components/UsersManagement';
-import { Sparkles, Calendar, BookOpen, Building2, Lock, ShieldCheck, UserCheck, KeyRound, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Sparkles, ShieldCheck, UserCheck, KeyRound, CheckCircle2, AlertTriangle, Check } from 'lucide-react';
 
 export default function Home() {
   const { lang, t } = useLanguage();
@@ -117,9 +117,9 @@ export default function Home() {
   // Show global loading state
   if (authLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 text-slate-700">
-        <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-sm font-bold">جاري التحقق من أمان وجلسة المستخدم...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#07080B] text-[#F4F5F7]">
+        <div className="w-10 h-10 border-2 border-[#7DA9FF] border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_25px_rgba(125,169,255,0.5)]" />
+        <p className="text-xs font-mono text-[#A2A7B3] tracking-widest uppercase">CONNECTING TO MISKRESERVE SYSTEM…</p>
       </div>
     );
   }
@@ -129,7 +129,7 @@ export default function Home() {
 
   if (!isApproved) {
     return (
-      <div className="min-h-screen flex flex-col justify-between bg-slate-50">
+      <div className="min-h-screen flex flex-col justify-between">
         
         {/* Top Navbar Header */}
         <Navbar
@@ -139,38 +139,37 @@ export default function Home() {
           onPrintLogbook={() => openAuthModal('login')}
         />
 
-        {/* Lock Screen Welcome Hero */}
-        <main className="max-w-4xl mx-auto px-4 py-12 my-auto w-full">
-          <div className="glass-panel rounded-3xl p-8 sm:p-12 border border-slate-200 text-center shadow-xl relative overflow-hidden">
-            <div className="absolute -right-20 -top-20 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
-
+        {/* Desktop Commander Style Lock Screen Hero */}
+        <main className="max-w-4xl mx-auto px-4 py-16 my-auto w-full">
+          <div className="glass-panel rounded-3xl p-8 sm:p-14 border border-[rgba(74,222,128,0.25)] text-center shadow-[0_30px_80px_rgba(0,0,0,0.7)] relative overflow-hidden bg-gradient-to-b from-[rgba(74,222,128,0.06)] via-[rgba(255,255,255,0.02)] to-transparent">
+            
             <div className="relative z-10 max-w-2xl mx-auto space-y-6">
               
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center mx-auto shadow-xl shadow-indigo-500/30 text-white">
-                <Lock className="w-10 h-10" />
+              {/* Desktop Commander Status Line */}
+              <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-[#4ADE80] mb-4">
+                ✓ NEON DATABASE CONNECTED · SYSTEM READY
               </div>
 
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-extrabold">
-                <ShieldCheck className="w-4 h-4 text-indigo-600" />
-                <span>نظام حماية وسجلات مسك رومز الخاص</span>
+              {/* Big Pulsing Ring Checkmark */}
+              <div className="check-big">
+                <Check className="w-8 h-8 text-[#4ADE80] stroke-[2.5]" />
               </div>
 
-              <h1 className="text-3xl sm:text-5xl font-black text-slate-900 leading-tight">
-                أهلاً بك في نظام مِسك رُومز
+              <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight pt-2">
+                أهلاً بك في نظام <span className="gradient-text">مِسك رُومز</span>
               </h1>
 
-              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-                استخدام وشغل القاعات وسجل الحجوزات متاح حصرياً للموظفين والحسابات المعتمدة والمؤكدة من الإدارة. يرجى تسجيل الدخول أو إنشاء حساب جديد للبدء.
+              <p className="text-sm sm:text-base text-[#A2A7B3] leading-relaxed max-w-xl mx-auto">
+                السجل الإلكتروني المعزز لشركة <strong className="text-white">MiskTech</strong> لتنظيم قاعات الاجتماعات والتدريب وضمان عدم تضارب الحجوزات. الحسابات متاحة للموظفين المعتمدين.
               </p>
 
               {/* Pending approval notice if registered */}
               {user && user.status === 'pending' && (
-                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-bold text-right flex items-start gap-3">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+                <div className="p-4 rounded-2xl bg-[rgba(245,158,11,0.1)] border border-[rgba(245,158,11,0.3)] text-amber-200 text-xs text-right flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
                   <div>
-                    <span className="block font-black text-sm mb-1 text-amber-800">حسابك قيد مراجعة وتفعيل الإدارة ⏳</span>
-                    <span>تم استلام طلب التسجيل بنجاح، يمكنك استخدام النظام فور قيام مسؤول النظم باعتتماد طلبك.</span>
+                    <span className="block font-bold text-sm mb-1 text-amber-300">حسابك قيد مراجعة وتفعيل الإدارة ⏳</span>
+                    <span className="text-[#A2A7B3]">تم استلام طلب التسجيل بنجاح، يمكنك استخدام النظام فور قيام مسؤول النظم باعتتماد طلبك.</span>
                   </div>
                 </div>
               )}
@@ -179,25 +178,25 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                 <button
                   onClick={() => openAuthModal('login')}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white text-sm font-extrabold shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[#F4F5F7] hover:bg-white text-[#07080B] text-sm font-bold shadow-[0_0_30px_rgba(255,255,255,0.25)] hover:shadow-[0_0_40px_rgba(125,169,255,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
-                  <KeyRound className="w-4 h-4" />
+                  <KeyRound className="w-4 h-4 text-[#07080B]" />
                   <span>تسجيل الدخول إلى النظام</span>
                 </button>
 
                 <button
                   onClick={() => openAuthModal('register')}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-sm font-bold shadow-xs hover:border-indigo-300 hover:text-indigo-600 transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[rgba(255,255,255,0.04)] hover:bg-[rgba(255,255,255,0.08)] border border-[var(--stroke)] text-white text-sm font-medium hover:border-[rgba(125,169,255,0.4)] transition-all flex items-center justify-center gap-2"
                 >
-                  <UserCheck className="w-4 h-4 text-indigo-600" />
+                  <UserCheck className="w-4 h-4 text-[#7DA9FF]" />
                   <span>إنشاء حساب موظف جديد</span>
                 </button>
               </div>
 
               {/* Default Admin Info Tip */}
-              <div className="pt-6 border-t border-slate-200/80 text-xs text-slate-500 flex items-center justify-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>حساب المشرف الافتراضي التجريبي: <strong>admin@misktech.com</strong> | كلمة المرور: <strong>admin123</strong></span>
+              <div className="pt-6 border-t border-[var(--stroke)] text-xs font-mono text-[#626772] flex items-center justify-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#4ADE80]" />
+                <span>حساب المشرف التجريبي: <strong className="text-white">admin@misktech.com</strong> | كلمة المرور: <strong className="text-white">admin123</strong></span>
               </div>
 
             </div>
@@ -206,8 +205,8 @@ export default function Home() {
         </main>
 
         {/* Footer */}
-        <footer className="text-center text-xs text-slate-400 py-6">
-          جميع الحقوق محفوظة © {new Date().getFullYear()} MiskTech - MiskReserve
+        <footer className="text-center text-xs font-mono text-[#626772] py-8 border-t border-[var(--stroke)]">
+          © {new Date().getFullYear()} Desktop Commander Style · MiskTech - MiskReserve System
         </footer>
 
         {/* Login & Registration Modal */}
@@ -236,22 +235,20 @@ export default function Home() {
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
         
-        {/* Banner Hero */}
-        <div className="relative glass-panel rounded-3xl p-6 sm:p-10 border border-indigo-500/20 overflow-hidden shadow-lg">
-          <div className="absolute -right-20 -top-20 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -left-20 -bottom-20 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Banner Hero Card */}
+        <div className="relative glass-panel rounded-3xl p-6 sm:p-10 border border-[var(--stroke)] overflow-hidden shadow-2xl bg-gradient-to-r from-[rgba(125,169,255,0.06)] via-[rgba(167,139,250,0.04)] to-[rgba(103,232,249,0.06)]">
           
           <div className="relative z-10 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold mb-4">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-              <span>{t.companyName}</span>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[rgba(125,169,255,0.1)] border border-[rgba(125,169,255,0.3)] text-[#7DA9FF] font-mono text-xs font-semibold mb-4">
+              <span className="dot-live"></span>
+              <span>{t.companyName} SYSTEM ONLINE</span>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900 leading-tight">
-              مرحباً بك {user.name} 👋
+            <h1 className="text-2xl sm:text-4xl font-extrabold text-white leading-tight">
+              مرحباً بك <span className="gradient-text">{user.name}</span> 👋
             </h1>
-            <p className="text-sm sm:text-base text-slate-600 mt-2 leading-relaxed">
-              {t.hero.subtitle} ({user.entity_name})
+            <p className="text-sm sm:text-base text-[#A2A7B3] mt-2 leading-relaxed font-sans">
+              {t.hero.subtitle} (<strong className="text-white">{user.entity_name}</strong>)
             </p>
           </div>
         </div>
@@ -261,9 +258,9 @@ export default function Home() {
 
         {/* Main Content Area */}
         {loading ? (
-          <div className="glass-panel rounded-3xl p-12 text-center text-slate-600">
-            <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-sm font-semibold">جاري تحميل سجل القاعات والبيانات...</p>
+          <div className="glass-panel rounded-3xl p-12 text-center text-[#A2A7B3]">
+            <div className="w-8 h-8 border-2 border-[#7DA9FF] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-xs font-mono">LOADING ROOMS & SCHEDULE DATA…</p>
           </div>
         ) : (
           <>

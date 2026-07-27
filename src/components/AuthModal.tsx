@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { X, LogIn, UserPlus, Mail, Lock, User, Building2, Phone, AlertCircle, CheckCircle2, ShieldCheck, Clock } from 'lucide-react';
+import { X, LogIn, UserPlus, Mail, Lock, User, Building2, Phone, AlertCircle, Clock } from 'lucide-react';
 
 export const AuthModal: React.FC = () => {
   const { isAuthModalOpen, closeAuthModal, authModalDefaultTab, login, register } = useAuth();
@@ -54,7 +54,6 @@ export const AuthModal: React.FC = () => {
 
     if (res.success) {
       setSuccessMessage('تم إرسال طلب إنشاء الحساب بنجاح! حسابك الآن قيد مراجعة واعتماد الإدارة قبل تسجيل الدخول.');
-      // Clear form
       setName('');
       setPassword('');
       setPhone('');
@@ -64,19 +63,19 @@ export const AuthModal: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-md p-4 overflow-y-auto">
-      <div className="relative w-full max-w-md glass-panel bg-white/95 rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-2xl animate-in fade-in zoom-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#07080B]/80 backdrop-blur-xl p-4 overflow-y-auto">
+      <div className="relative w-full max-w-md glass-panel bg-[#0a0b0f]/95 rounded-3xl p-6 sm:p-8 border border-[var(--stroke-bright)] shadow-[0_0_80px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in duration-200 text-white">
         
         {/* Close Button */}
         <button
           onClick={closeAuthModal}
-          className="absolute left-5 top-5 p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition-all"
+          className="absolute left-5 top-5 p-2 rounded-xl bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)] text-[#A2A7B3] hover:text-white transition-all border border-[var(--stroke)]"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Header Tabs */}
-        <div className="flex items-center gap-2 p-1.5 bg-slate-100 rounded-2xl border border-slate-200 mb-6 mt-2">
+        <div className="flex items-center gap-2 p-1.5 bg-[rgba(255,255,255,0.03)] rounded-2xl border border-[var(--stroke)] mb-6 mt-2">
           <button
             onClick={() => {
               setTab('login');
@@ -85,8 +84,8 @@ export const AuthModal: React.FC = () => {
             }}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${
               tab === 'login'
-                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm'
-                : 'text-slate-600 hover:text-indigo-600'
+                ? 'bg-[#F4F5F7] text-[#07080B] shadow-[0_0_20px_rgba(255,255,255,0.2)]'
+                : 'text-[#A2A7B3] hover:text-white'
             }`}
           >
             <LogIn className="w-4 h-4" />
@@ -101,8 +100,8 @@ export const AuthModal: React.FC = () => {
             }}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${
               tab === 'register'
-                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm'
-                : 'text-slate-600 hover:text-indigo-600'
+                ? 'bg-[#F4F5F7] text-[#07080B] shadow-[0_0_20px_rgba(255,255,255,0.2)]'
+                : 'text-[#A2A7B3] hover:text-white'
             }`}
           >
             <UserPlus className="w-4 h-4" />
@@ -112,15 +111,15 @@ export const AuthModal: React.FC = () => {
 
         {/* Notifications / Alerts */}
         {errorMessage && (
-          <div className="mb-5 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-start gap-2.5 leading-relaxed">
-            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+          <div className="mb-5 p-4 rounded-2xl bg-[rgba(244,63,94,0.1)] border border-[rgba(244,63,94,0.3)] text-rose-200 text-xs flex items-start gap-2.5 leading-relaxed">
+            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
             <span>{errorMessage}</span>
           </div>
         )}
 
         {successMessage && (
-          <div className="mb-5 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-2.5 leading-relaxed">
-            <Clock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+          <div className="mb-5 p-4 rounded-2xl bg-[rgba(245,158,11,0.1)] border border-[rgba(245,158,11,0.3)] text-amber-200 text-xs flex items-start gap-2.5 leading-relaxed">
+            <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
             <div>
               <strong className="block font-bold mb-1">طلبك قيد الاعتماد:</strong>
               <span>{successMessage}</span>
@@ -132,8 +131,8 @@ export const AuthModal: React.FC = () => {
         {tab === 'login' && (
           <form onSubmit={handleLoginSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                <Mail className="w-3.5 h-3.5 text-indigo-600" />
+              <label className="block text-xs font-mono text-[#A2A7B3] mb-1.5 flex items-center gap-1.5">
+                <Mail className="w-3.5 h-3.5 text-[#7DA9FF]" />
                 البريد الإلكتروني *
               </label>
               <input
@@ -142,13 +141,13 @@ export const AuthModal: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@misktech.com"
-                className="w-full px-4 py-2.5 rounded-xl glass-input text-sm"
+                className="w-full px-4 py-2.5 rounded-xl glass-input text-sm font-mono"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-indigo-600" />
+              <label className="block text-xs font-mono text-[#A2A7B3] mb-1.5 flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-[#7DA9FF]" />
                 كلمة المرور *
               </label>
               <input
@@ -157,7 +156,7 @@ export const AuthModal: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-2.5 rounded-xl glass-input text-sm"
+                className="w-full px-4 py-2.5 rounded-xl glass-input text-sm font-mono"
               />
             </div>
 
@@ -165,7 +164,7 @@ export const AuthModal: React.FC = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white text-xs font-extrabold shadow-md shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl bg-[#F4F5F7] hover:bg-white text-[#07080B] text-xs font-bold shadow-[0_0_25px_rgba(255,255,255,0.2)] hover:shadow-[0_0_35px_rgba(125,169,255,0.4)] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {submitting ? (
                   <span>جاري التحقق...</span>
@@ -184,8 +183,8 @@ export const AuthModal: React.FC = () => {
         {tab === 'register' && (
           <form onSubmit={handleRegisterSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-indigo-600" />
+              <label className="block text-xs font-mono text-[#A2A7B3] mb-1.5 flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-[#7DA9FF]" />
                 الاسم الكامل *
               </label>
               <input
@@ -199,8 +198,8 @@ export const AuthModal: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                <Mail className="w-3.5 h-3.5 text-indigo-600" />
+              <label className="block text-xs font-mono text-[#A2A7B3] mb-1.5 flex items-center gap-1.5">
+                <Mail className="w-3.5 h-3.5 text-[#7DA9FF]" />
                 البريد الإلكتروني *
               </label>
               <input
@@ -209,13 +208,13 @@ export const AuthModal: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="user@misktech.com"
-                className="w-full px-4 py-2.5 rounded-xl glass-input text-sm"
+                className="w-full px-4 py-2.5 rounded-xl glass-input text-sm font-mono"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-indigo-600" />
+              <label className="block text-xs font-mono text-[#A2A7B3] mb-1.5 flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-[#7DA9FF]" />
                 كلمة المرور *
               </label>
               <input
@@ -225,14 +224,14 @@ export const AuthModal: React.FC = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-2.5 rounded-xl glass-input text-sm"
+                className="w-full px-4 py-2.5 rounded-xl glass-input text-sm font-mono"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-indigo-600" />
+                <label className="block text-xs font-mono text-[#A2A7B3] mb-1.5 flex items-center gap-1.5">
+                  <Building2 className="w-3.5 h-3.5 text-[#7DA9FF]" />
                   الجهة / الإدارة
                 </label>
                 <input
@@ -245,8 +244,8 @@ export const AuthModal: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1.5 flex items-center gap-1.5">
-                  <Phone className="w-3.5 h-3.5 text-indigo-600" />
+                <label className="block text-xs font-mono text-[#A2A7B3] mb-1.5 flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-[#7DA9FF]" />
                   رقم الجوال
                 </label>
                 <input
@@ -254,7 +253,7 @@ export const AuthModal: React.FC = () => {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="05XXXXXXXX"
-                  className="w-full px-3.5 py-2.5 rounded-xl glass-input text-xs"
+                  className="w-full px-3.5 py-2.5 rounded-xl glass-input text-xs font-mono"
                 />
               </div>
             </div>
@@ -263,7 +262,7 @@ export const AuthModal: React.FC = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 text-white text-xs font-extrabold shadow-md shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl bg-[#F4F5F7] hover:bg-white text-[#07080B] text-xs font-bold shadow-[0_0_25px_rgba(255,255,255,0.2)] hover:shadow-[0_0_35px_rgba(125,169,255,0.4)] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {submitting ? (
                   <span>جاري إرسال الطلب...</span>
