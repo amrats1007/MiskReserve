@@ -37,17 +37,11 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" className={`${tajawal.variable} ${inter.variable} ${jetbrains.variable}`}>
       <body className="antialiased selection:bg-cyan-500 selection:text-black">
-        {/* Desktop Commander Aurora Radial Lighting */}
+        {/* Hardware-Accelerated Aurora Light */}
         <div className="aurora" aria-hidden="true" />
         
-        {/* Desktop Commander Film Grain Overlay */}
-        <svg className="grain" width="100%" height="100%" aria-hidden="true">
-          <filter id="noise">
-            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch" />
-            <feColorMatrix type="saturate" values="0" />
-          </filter>
-          <rect width="100%" height="100%" filter="url(#noise)" opacity="0.18" />
-        </svg>
+        {/* Hardware-Accelerated Ultra-Light Noise Overlay */}
+        <div className="grain" aria-hidden="true" />
 
         <div className="relative z-10 min-h-screen">
           <ThemeProvider>
