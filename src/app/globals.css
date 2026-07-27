@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
-:root {
+:root, html[data-theme="dark"] {
   --bg: #07080B;
-  --glass: rgba(255, 255, 255, 0.035);
-  --glass-bright: rgba(255, 255, 255, 0.06);
+  --glass: rgba(10, 11, 15, 0.65);
+  --glass-bright: rgba(255, 255, 255, 0.05);
   --stroke: rgba(255, 255, 255, 0.09);
   --stroke-bright: rgba(255, 255, 255, 0.18);
   --text: #F4F5F7;
@@ -14,6 +14,30 @@
   --cyan: #67E8F9;
   --green: #4ADE80;
   --grad: linear-gradient(100deg, #7DA9FF 0%, #A78BFA 55%, #67E8F9 110%);
+  --input-bg: rgba(255, 255, 255, 0.04);
+  --input-border: rgba(255, 255, 255, 0.12);
+  --shadow-color: rgba(0, 0, 0, 0.5);
+  --aurora-opacity: 0.45;
+}
+
+html[data-theme="light"], html.light {
+  --bg: #F8FAFC;
+  --glass: rgba(255, 255, 255, 0.82);
+  --glass-bright: rgba(255, 255, 255, 0.95);
+  --stroke: rgba(226, 232, 240, 0.9);
+  --stroke-bright: rgba(203, 213, 225, 0.9);
+  --text: #0F172A;
+  --text-dim: #475569;
+  --text-faint: #94A3B8;
+  --blue: #2563EB;
+  --violet: #7C3AED;
+  --cyan: #0891B2;
+  --green: #16A34A;
+  --grad: linear-gradient(100deg, #2563EB 0%, #7C3AED 55%, #0891B2 110%);
+  --input-bg: #FFFFFF;
+  --input-border: #CBD5E1;
+  --shadow-color: rgba(148, 163, 184, 0.2);
+  --aurora-opacity: 0.2;
 }
 
 @layer base {
@@ -28,6 +52,7 @@
     min-height: 100vh;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
 
@@ -40,7 +65,8 @@
   z-index: 0;
   pointer-events: none;
   filter: blur(100px) saturate(140%);
-  opacity: 0.45;
+  opacity: var(--aurora-opacity);
+  transition: opacity 0.3s ease;
 }
 
 .aurora::before,
@@ -83,7 +109,7 @@
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  opacity: 0.15;
+  opacity: 0.12;
   mix-blend-mode: overlay;
 }
 
@@ -91,15 +117,16 @@
    Desktop Commander Glassmorphism Utilities
    ============================================================ */
 .glass-panel {
-  background: rgba(10, 11, 15, 0.65);
+  background: var(--glass);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border: 1px solid var(--stroke);
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), inset 0 1px rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 50px var(--shadow-color), inset 0 1px rgba(255, 255, 255, 0.1);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .glass-panel-bright {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--glass-bright);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--stroke-bright);
@@ -110,15 +137,14 @@
 }
 
 .glass-panel-hover:hover {
-  background: rgba(255, 255, 255, 0.055);
-  border-color: rgba(125, 169, 255, 0.35);
+  border-color: rgba(125, 169, 255, 0.4);
   transform: translateY(-3px);
-  box-shadow: 0 20px 40px -10px rgba(125, 169, 255, 0.15), 0 0 30px rgba(167, 139, 250, 0.1);
+  box-shadow: 0 20px 40px -10px var(--shadow-color);
 }
 
 .glass-input {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
   color: var(--text);
   transition: all 0.2s ease;
 }
@@ -130,8 +156,7 @@
 .glass-input:focus {
   outline: none;
   border-color: var(--blue);
-  box-shadow: 0 0 0 4px rgba(125, 169, 255, 0.15);
-  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 0 0 4px rgba(125, 169, 255, 0.2);
 }
 
 /* Gradients */
@@ -142,7 +167,7 @@
 }
 
 .gradient-brand {
-  background: linear-gradient(135deg, #7DA9FF 0%, #A78BFA 50%, #67E8F9 100%);
+  background: var(--grad);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -168,12 +193,12 @@
   height: 74px;
   margin: 0 auto;
   border-radius: 50%;
-  background: rgba(74, 222, 128, 0.08);
+  background: rgba(74, 222, 128, 0.1);
   border: 1px solid rgba(74, 222, 128, 0.4);
   display: grid;
   place-items: center;
   position: relative;
-  box-shadow: 0 0 40px rgba(74, 222, 128, 0.2);
+  box-shadow: 0 0 40px rgba(74, 222, 128, 0.25);
 }
 
 .check-big::before,
@@ -204,7 +229,7 @@
   border-radius: 9999px;
   font-size: 12px;
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--input-bg);
   border: 1px solid var(--stroke);
   color: var(--text-dim);
   transition: all 0.2s ease;
@@ -222,23 +247,23 @@
   font-family: var(--font-mono), 'JetBrains Mono', monospace !important;
 }
 
-/* Custom Dark Scrollbar */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(7, 8, 11, 0.8);
+  background: var(--bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(125, 169, 255, 0.25);
+  background: rgba(125, 169, 255, 0.35);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(125, 169, 255, 0.5);
+  background: rgba(125, 169, 255, 0.65);
 }
 
 /* Print Styling for Secretariat Daily Schedule */

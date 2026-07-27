@@ -38,11 +38,11 @@ export const RoomsDirectory: React.FC<RoomsDirectoryProps> = ({ rooms, onSelectR
     <div className="space-y-6">
       
       <div className="glass-panel p-6 rounded-3xl border border-[var(--stroke)] shadow-2xl">
-        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <Building2 className="w-5 h-5 text-[#7DA9FF]" />
+        <h2 className="text-xl font-bold text-[var(--text)] flex items-center gap-2">
+          <Building2 className="w-5 h-5 text-[var(--blue)]" />
           {t.rooms.title}
         </h2>
-        <p className="text-xs text-[#A2A7B3] mt-1 font-sans">دليل القاعات التدريبية والاجتماعات المتاحة بالشركة والتجهيزات التقنية المتاحة بكل قاعة</p>
+        <p className="text-xs text-[var(--text-dim)] mt-1 font-sans">دليل القاعات التدريبية والاجتماعات المتاحة بالشركة والتجهيزات التقنية المتاحة بكل قاعة</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -64,32 +64,32 @@ export const RoomsDirectory: React.FC<RoomsDirectoryProps> = ({ rooms, onSelectR
                       style={{ backgroundColor: room.color, color: room.color }}
                     />
                     <div>
-                      <h3 className="text-lg font-bold text-white">{name}</h3>
-                      <span className="text-xs text-[#7DA9FF] font-mono">
+                      <h3 className="text-lg font-bold text-[var(--text)]">{name}</h3>
+                      <span className="text-xs text-[var(--blue)] font-mono">
                         CODE: {room.code}
                       </span>
                     </div>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-[rgba(74,222,128,0.1)] text-[#4ADE80] border border-[rgba(74,222,128,0.3)] font-mono text-xs font-bold">
+                  <span className="px-3 py-1 rounded-full bg-[rgba(74,222,128,0.12)] text-[var(--green)] border border-[rgba(74,222,128,0.3)] font-mono text-xs font-bold">
                     ● READY
                   </span>
                 </div>
 
                 {/* Meta details */}
-                <div className="grid grid-cols-2 gap-3 py-4 text-xs font-mono text-[#A2A7B3]">
+                <div className="grid grid-cols-2 gap-3 py-4 text-xs font-mono text-[var(--text-dim)]">
                   <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-[#7DA9FF]" />
+                    <Users className="w-4 h-4 text-[var(--blue)]" />
                     <span>CAPACITY: {room.capacity}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-[#7DA9FF]" />
+                    <MapPin className="w-4 h-4 text-[var(--blue)]" />
                     <span>{loc}</span>
                   </div>
                 </div>
 
                 {/* Equipment Badges */}
                 <div className="pt-2">
-                  <h4 className="text-[11px] font-mono font-semibold text-[#626772] mb-2 uppercase tracking-wider">
+                  <h4 className="text-[11px] font-mono font-semibold text-[var(--text-faint)] mb-2 uppercase tracking-wider">
                     EQUIPMENT & AMENITIES:
                   </h4>
                   <div className="flex flex-wrap gap-2">
@@ -102,7 +102,7 @@ export const RoomsDirectory: React.FC<RoomsDirectoryProps> = ({ rooms, onSelectR
                           key={eq}
                           className="cloud-pill hl"
                         >
-                          <CheckCircle className="w-3.5 h-3.5 text-[#4ADE80]" />
+                          <CheckCircle className="w-3.5 h-3.5 text-[var(--green)]" />
                           {label}
                         </span>
                       );
@@ -115,7 +115,7 @@ export const RoomsDirectory: React.FC<RoomsDirectoryProps> = ({ rooms, onSelectR
               <div className="pt-6 mt-6 border-t border-[var(--stroke)]">
                 <button
                   onClick={() => onSelectRoomForBooking(room.id)}
-                  className="w-full py-3 rounded-xl bg-[rgba(255,255,255,0.05)] hover:bg-[#F4F5F7] border border-[var(--stroke)] hover:border-white text-white hover:text-[#07080B] text-xs font-bold transition-all shadow-lg hover:shadow-[0_0_25px_rgba(255,255,255,0.3)]"
+                  className="w-full py-3 rounded-xl bg-[var(--input-bg)] hover:bg-[var(--text)] border border-[var(--stroke)] hover:border-[var(--text)] text-[var(--text)] hover:text-[var(--bg)] text-xs font-bold transition-all shadow-lg"
                 >
                   حجز هذه القاعة الآن →
                 </button>

@@ -11,7 +11,7 @@ import { RoomsDirectory } from '@/components/RoomsDirectory';
 import { BookingModal } from '@/components/BookingModal';
 import { AuthModal } from '@/components/AuthModal';
 import { UsersManagement } from '@/components/UsersManagement';
-import { Sparkles, ShieldCheck, UserCheck, KeyRound, CheckCircle2, AlertTriangle, Check } from 'lucide-react';
+import { Sparkles, UserCheck, KeyRound, CheckCircle2, AlertTriangle, Check } from 'lucide-react';
 
 export default function Home() {
   const { lang, t } = useLanguage();
@@ -35,21 +35,17 @@ export default function Home() {
   // Initialize DB and fetch data if user is authenticated and approved
   const fetchData = async () => {
     try {
-      // 1. Ensure DB initialized
       await fetch('/api/init-db');
 
       if (user && user.status === 'approved') {
-        // 2. Fetch Rooms
         const roomsRes = await fetch('/api/rooms');
         const roomsData = await roomsRes.json();
         if (roomsData.rooms) setRooms(roomsData.rooms);
 
-        // 3. Fetch Bookings
         const bookingsRes = await fetch('/api/bookings');
         const bookingsData = await bookingsRes.json();
         if (bookingsData.bookings) setBookings(bookingsData.bookings);
 
-        // 4. Fetch Stats
         const statsRes = await fetch('/api/stats');
         const statsData = await statsRes.json();
         if (statsData.stats) setStats(statsData.stats);
@@ -66,7 +62,6 @@ export default function Home() {
     fetchData();
   }, [user]);
 
-  // Update Status action from Secretariat Logbook
   const handleStatusChange = async (id: number, status: string) => {
     try {
       await fetch('/api/bookings', {
@@ -80,7 +75,6 @@ export default function Home() {
     }
   };
 
-  // Delete Booking action
   const handleDeleteBooking = async (id: number) => {
     if (!window.confirm(t.messages.deleteConfirm)) return;
 
@@ -92,21 +86,18 @@ export default function Home() {
     }
   };
 
-  // Handle click on empty timeline slot in CalendarView
   const handleSlotClick = (roomId: number, timeStr: string) => {
     setModalInitialRoomId(roomId);
     setModalInitialStartTime(timeStr);
     setIsModalOpen(true);
   };
 
-  // Select room from directory tab
   const handleSelectRoomForBooking = (roomId: number) => {
     setModalInitialRoomId(roomId);
     setModalInitialStartTime(null);
     setIsModalOpen(true);
   };
 
-  // Print Logbook Handler
   const handlePrintLogbook = () => {
     setActiveTab('logbook');
     setTimeout(() => {
@@ -114,17 +105,15 @@ export default function Home() {
     }, 200);
   };
 
-  // Show global loading state
   if (authLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#07080B] text-[#F4F5F7]">
-        <div className="w-10 h-10 border-2 border-[#7DA9FF] border-t-transparent rounded-full animate-spin mb-4 shadow-[0_0_25px_rgba(125,169,255,0.5)]" />
-        <p className="text-xs font-mono text-[#A2A7B3] tracking-widest uppercase">CONNECTING TO MISKRESERVE SYSTEM…</p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--bg)] text-[var(--text)]">
+        <div className="w-10 h-10 border-2 border-[var(--blue)] border-t-transparent rounded-full animate-spin mb-4 shadow-lg" />
+        <p className="text-xs font-mono text-[var(--text-dim)] tracking-widest uppercase">CONNECTING TO MISKRESERVE SYSTEM…</p>
       </div>
     );
   }
 
-  // AUTHENTICATION GUARD: If user is not logged in or account is not approved
   const isApproved = user && user.status === 'approved';
 
   if (!isApproved) {
@@ -141,35 +130,35 @@ export default function Home() {
 
         {/* Desktop Commander Style Lock Screen Hero */}
         <main className="max-w-4xl mx-auto px-4 py-16 my-auto w-full">
-          <div className="glass-panel rounded-3xl p-8 sm:p-14 border border-[rgba(74,222,128,0.25)] text-center shadow-[0_30px_80px_rgba(0,0,0,0.7)] relative overflow-hidden bg-gradient-to-b from-[rgba(74,222,128,0.06)] via-[rgba(255,255,255,0.02)] to-transparent">
+          <div className="glass-panel rounded-3xl p-8 sm:p-14 border border-[rgba(74,222,128,0.25)] text-center shadow-2xl relative overflow-hidden bg-gradient-to-b from-[rgba(74,222,128,0.06)] via-transparent to-transparent">
             
             <div className="relative z-10 max-w-2xl mx-auto space-y-6">
               
               {/* Desktop Commander Status Line */}
-              <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-[#4ADE80] mb-4">
+              <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-[var(--green)] mb-4">
                 ✓ NEON DATABASE CONNECTED · SYSTEM READY
               </div>
 
               {/* Big Pulsing Ring Checkmark */}
               <div className="check-big">
-                <Check className="w-8 h-8 text-[#4ADE80] stroke-[2.5]" />
+                <Check className="w-8 h-8 text-[var(--green)] stroke-[2.5]" />
               </div>
 
-              <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight pt-2">
+              <h1 className="text-3xl sm:text-5xl font-extrabold text-[var(--text)] tracking-tight leading-tight pt-2">
                 أهلاً بك في نظام <span className="gradient-text">مِسك رُومز</span>
               </h1>
 
-              <p className="text-sm sm:text-base text-[#A2A7B3] leading-relaxed max-w-xl mx-auto">
-                السجل الإلكتروني المعزز لشركة <strong className="text-white">MiskTech</strong> لتنظيم قاعات الاجتماعات والتدريب وضمان عدم تضارب الحجوزات. الحسابات متاحة للموظفين المعتمدين.
+              <p className="text-sm sm:text-base text-[var(--text-dim)] leading-relaxed max-w-xl mx-auto">
+                السجل الإلكتروني المعزز لشركة <strong className="text-[var(--text)]">MiskTech</strong> لتنظيم قاعات الاجتماعات والتدريب وضمان عدم تضارب الحجوزات. الحسابات متاحة للموظفين المعتمدين.
               </p>
 
               {/* Pending approval notice if registered */}
               {user && user.status === 'pending' && (
-                <div className="p-4 rounded-2xl bg-[rgba(245,158,11,0.1)] border border-[rgba(245,158,11,0.3)] text-amber-200 text-xs text-right flex items-start gap-3">
-                  <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                <div className="p-4 rounded-2xl bg-[rgba(245,158,11,0.1)] border border-[rgba(245,158,11,0.3)] text-amber-500 text-xs text-right flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                   <div>
-                    <span className="block font-bold text-sm mb-1 text-amber-300">حسابك قيد مراجعة وتفعيل الإدارة ⏳</span>
-                    <span className="text-[#A2A7B3]">تم استلام طلب التسجيل بنجاح، يمكنك استخدام النظام فور قيام مسؤول النظم باعتتماد طلبك.</span>
+                    <span className="block font-bold text-sm mb-1 text-amber-600">حسابك قيد مراجعة وتفعيل الإدارة ⏳</span>
+                    <span className="text-[var(--text-dim)]">تم استلام طلب التسجيل بنجاح، يمكنك استخدام النظام فور قيام مسؤول النظم باعتتماد طلبك.</span>
                   </div>
                 </div>
               )}
@@ -178,25 +167,25 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                 <button
                   onClick={() => openAuthModal('login')}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[#F4F5F7] hover:bg-white text-[#07080B] text-sm font-bold shadow-[0_0_30px_rgba(255,255,255,0.25)] hover:shadow-[0_0_40px_rgba(125,169,255,0.4)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[var(--text)] hover:opacity-90 text-[var(--bg)] text-sm font-bold shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
-                  <KeyRound className="w-4 h-4 text-[#07080B]" />
+                  <KeyRound className="w-4 h-4 text-[var(--bg)]" />
                   <span>تسجيل الدخول إلى النظام</span>
                 </button>
 
                 <button
                   onClick={() => openAuthModal('register')}
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[rgba(255,255,255,0.04)] hover:bg-[rgba(255,255,255,0.08)] border border-[var(--stroke)] text-white text-sm font-medium hover:border-[rgba(125,169,255,0.4)] transition-all flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[var(--input-bg)] hover:bg-[var(--stroke)] border border-[var(--stroke)] text-[var(--text)] text-sm font-medium hover:border-[var(--blue)] transition-all flex items-center justify-center gap-2"
                 >
-                  <UserCheck className="w-4 h-4 text-[#7DA9FF]" />
+                  <UserCheck className="w-4 h-4 text-[var(--blue)]" />
                   <span>إنشاء حساب موظف جديد</span>
                 </button>
               </div>
 
               {/* Default Admin Info Tip */}
-              <div className="pt-6 border-t border-[var(--stroke)] text-xs font-mono text-[#626772] flex items-center justify-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-[#4ADE80]" />
-                <span>حساب المشرف التجريبي: <strong className="text-white">admin@misktech.com</strong> | كلمة المرور: <strong className="text-white">admin123</strong></span>
+              <div className="pt-6 border-t border-[var(--stroke)] text-xs font-mono text-[var(--text-faint)] flex items-center justify-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[var(--green)]" />
+                <span>حساب المشرف التجريبي: <strong className="text-[var(--text)]">admin@misktech.com</strong> | كلمة المرور: <strong className="text-[var(--text)]">admin123</strong></span>
               </div>
 
             </div>
@@ -205,7 +194,7 @@ export default function Home() {
         </main>
 
         {/* Footer */}
-        <footer className="text-center text-xs font-mono text-[#626772] py-8 border-t border-[var(--stroke)]">
+        <footer className="text-center text-xs font-mono text-[var(--text-faint)] py-8 border-t border-[var(--stroke)]">
           © {new Date().getFullYear()} Desktop Commander Style · MiskTech - MiskReserve System
         </footer>
 
@@ -236,19 +225,19 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-8">
         
         {/* Banner Hero Card */}
-        <div className="relative glass-panel rounded-3xl p-6 sm:p-10 border border-[var(--stroke)] overflow-hidden shadow-2xl bg-gradient-to-r from-[rgba(125,169,255,0.06)] via-[rgba(167,139,250,0.04)] to-[rgba(103,232,249,0.06)]">
+        <div className="relative glass-panel rounded-3xl p-6 sm:p-10 border border-[var(--stroke)] overflow-hidden shadow-2xl">
           
           <div className="relative z-10 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[rgba(125,169,255,0.1)] border border-[rgba(125,169,255,0.3)] text-[#7DA9FF] font-mono text-xs font-semibold mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[rgba(125,169,255,0.12)] border border-[rgba(125,169,255,0.3)] text-[var(--blue)] font-mono text-xs font-semibold mb-4">
               <span className="dot-live"></span>
               <span>{t.companyName} SYSTEM ONLINE</span>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-white leading-tight">
+            <h1 className="text-2xl sm:text-4xl font-extrabold text-[var(--text)] leading-tight">
               مرحباً بك <span className="gradient-text">{user.name}</span> 👋
             </h1>
-            <p className="text-sm sm:text-base text-[#A2A7B3] mt-2 leading-relaxed font-sans">
-              {t.hero.subtitle} (<strong className="text-white">{user.entity_name}</strong>)
+            <p className="text-sm sm:text-base text-[var(--text-dim)] mt-2 leading-relaxed font-sans">
+              {t.hero.subtitle} (<strong className="text-[var(--text)]">{user.entity_name}</strong>)
             </p>
           </div>
         </div>
@@ -258,8 +247,8 @@ export default function Home() {
 
         {/* Main Content Area */}
         {loading ? (
-          <div className="glass-panel rounded-3xl p-12 text-center text-[#A2A7B3]">
-            <div className="w-8 h-8 border-2 border-[#7DA9FF] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="glass-panel rounded-3xl p-12 text-center text-[var(--text-dim)]">
+            <div className="w-8 h-8 border-2 border-[var(--blue)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
             <p className="text-xs font-mono">LOADING ROOMS & SCHEDULE DATA…</p>
           </div>
         ) : (

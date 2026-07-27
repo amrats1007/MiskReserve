@@ -3,6 +3,7 @@ import { Tajawal, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 const tajawal = Tajawal({
   subsets: ["arabic", "latin"],
@@ -49,14 +50,15 @@ export default function RootLayout({
         </svg>
 
         <div className="relative z-10 min-h-screen">
-          <AuthProvider>
-            <LanguageProvider>
-              {children}
-            </LanguageProvider>
-          </AuthProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <LanguageProvider>
+                {children}
+              </LanguageProvider>
+            </AuthProvider>
+          </ThemeProvider>
         </div>
       </body>
     </html>
   );
 }
-

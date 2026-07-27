@@ -58,18 +58,18 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
       {/* Header & Controls */}
       <div className="glass-panel p-6 rounded-3xl border border-[var(--stroke)] flex flex-col md:flex-row items-center justify-between gap-4 shadow-2xl">
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-[#7DA9FF]" />
+          <h2 className="text-xl font-bold text-[var(--text)] flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-[var(--blue)]" />
             {t.logbook.title}
           </h2>
-          <p className="text-xs text-[#A2A7B3] mt-1 font-sans">{t.logbook.subtitle}</p>
+          <p className="text-xs text-[var(--text-dim)] mt-1 font-sans">{t.logbook.subtitle}</p>
         </div>
 
         {/* Search & Filter Inputs */}
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           {/* Search Box */}
           <div className="relative flex-1 md:w-64">
-            <Search className="w-4 h-4 text-[#A2A7B3] absolute left-3 top-3" />
+            <Search className="w-4 h-4 text-[var(--text-dim)] absolute left-3 top-3" />
             <input
               type="text"
               value={searchTerm}
@@ -83,7 +83,7 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 rounded-xl glass-input text-xs bg-[#07080B] text-white border-[var(--stroke)] font-mono"
+            className="px-3 py-2 rounded-xl glass-input text-xs bg-[var(--input-bg)] text-[var(--text)] border-[var(--stroke)] font-mono"
           >
             <option value="all">{t.filter.allStatuses}</option>
             <option value="confirmed">{t.filter.confirmed}</option>
@@ -94,9 +94,9 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
           {/* Print Button */}
           <button
             onClick={onPrint}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)] text-white text-xs font-mono font-medium border border-[var(--stroke)] transition-all hover:border-[rgba(125,169,255,0.4)] shadow-lg"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--input-bg)] hover:bg-[var(--stroke)] text-[var(--text)] text-xs font-mono font-medium border border-[var(--stroke)] transition-all shadow-lg"
           >
-            <Printer className="w-4 h-4 text-[#7DA9FF]" />
+            <Printer className="w-4 h-4 text-[var(--blue)]" />
             <span>{t.nav.printLogbook}</span>
           </button>
         </div>
@@ -113,7 +113,7 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
 
         <div className="overflow-x-auto">
           <table className="w-full text-right text-xs">
-            <thead className="bg-[rgba(255,255,255,0.03)] text-[#A2A7B3] font-mono font-bold uppercase tracking-wider border-b border-[var(--stroke)]">
+            <thead className="bg-[var(--input-bg)] text-[var(--text-dim)] font-mono font-bold uppercase tracking-wider border-b border-[var(--stroke)]">
               <tr>
                 <th className="p-3">#</th>
                 <th className="p-3">{t.logbook.tableHeader.date}</th>
@@ -130,8 +130,8 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
             <tbody className="divide-y divide-[var(--stroke)] font-medium">
               {filteredBookings.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="p-8 text-center text-[#A2A7B3]">
-                    <AlertCircle className="w-8 h-8 text-[#626772] mx-auto mb-2" />
+                  <td colSpan={10} className="p-8 text-center text-[var(--text-dim)]">
+                    <AlertCircle className="w-8 h-8 text-[var(--text-faint)] mx-auto mb-2" />
                     {t.logbook.noData}
                   </td>
                 </tr>
@@ -140,38 +140,38 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
                   const roomName = lang === 'ar' ? b.room_name_ar : b.room_name_en;
 
                   return (
-                    <tr key={b.id} className="hover:bg-[rgba(255,255,255,0.02)] transition-colors">
-                      <td className="p-3 font-mono text-[#626772]">{idx + 1}</td>
-                      <td className="p-3 whitespace-nowrap font-mono text-[#7DA9FF] font-semibold">
+                    <tr key={b.id} className="hover:bg-[var(--input-bg)] transition-colors">
+                      <td className="p-3 font-mono text-[var(--text-faint)]">{idx + 1}</td>
+                      <td className="p-3 whitespace-nowrap font-mono text-[var(--blue)] font-semibold">
                         {new Date(b.booking_date).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US')}
                       </td>
-                      <td className="p-3 whitespace-nowrap font-mono text-white">
+                      <td className="p-3 whitespace-nowrap font-mono text-[var(--text)]">
                         {b.start_time.substring(0, 5)} - {b.end_time.substring(0, 5)}
                       </td>
-                      <td className="p-3 font-bold text-white whitespace-nowrap">
+                      <td className="p-3 font-bold text-[var(--text)] whitespace-nowrap">
                         <span
                           className="inline-block w-2.5 h-2.5 rounded-full ml-1.5 shadow-[0_0_8px_currentColor]"
                           style={{ backgroundColor: b.room_color || '#7DA9FF', color: b.room_color || '#7DA9FF' }}
                         />
                         {roomName || `قاعة #${b.room_id}`}
                       </td>
-                      <td className="p-3 text-[#F4F5F7] font-semibold">{b.booker_name}</td>
-                      <td className="p-3 text-[#A78BFA] font-mono">{b.entity_name}</td>
-                      <td className="p-3 text-white max-w-xs truncate font-medium">{b.event_title}</td>
-                      <td className="p-3 text-center font-mono text-[#A2A7B3]">{b.attendees_count}</td>
+                      <td className="p-3 text-[var(--text)] font-semibold">{b.booker_name}</td>
+                      <td className="p-3 text-[var(--violet)] font-mono">{b.entity_name}</td>
+                      <td className="p-3 text-[var(--text)] max-w-xs truncate font-medium">{b.event_title}</td>
+                      <td className="p-3 text-center font-mono text-[var(--text-dim)]">{b.attendees_count}</td>
                       <td className="p-3 whitespace-nowrap">
                         {b.status === 'confirmed' && (
-                          <span className="px-2.5 py-1 rounded-full bg-[rgba(74,222,128,0.12)] text-[#4ADE80] border border-[rgba(74,222,128,0.3)] font-mono text-[10px] font-bold">
+                          <span className="px-2.5 py-1 rounded-full bg-[rgba(74,222,128,0.15)] text-[var(--green)] border border-[rgba(74,222,128,0.3)] font-mono text-[10px] font-bold">
                             ✔ {t.filter.confirmed}
                           </span>
                         )}
                         {b.status === 'pending' && (
-                          <span className="px-2.5 py-1 rounded-full bg-[rgba(245,158,11,0.12)] text-amber-400 border border-[rgba(245,158,11,0.3)] font-mono text-[10px] font-bold">
+                          <span className="px-2.5 py-1 rounded-full bg-[rgba(245,158,11,0.15)] text-amber-500 border border-[rgba(245,158,11,0.3)] font-mono text-[10px] font-bold">
                             ⏳ {t.filter.pending}
                           </span>
                         )}
                         {b.status === 'cancelled' && (
-                          <span className="px-2.5 py-1 rounded-full bg-[rgba(244,63,94,0.12)] text-rose-400 border border-[rgba(244,63,94,0.3)] font-mono text-[10px] font-bold">
+                          <span className="px-2.5 py-1 rounded-full bg-[rgba(244,63,94,0.15)] text-rose-500 border border-[rgba(244,63,94,0.3)] font-mono text-[10px] font-bold">
                             ✖ {t.filter.cancelled}
                           </span>
                         )}
@@ -181,7 +181,7 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
                           {b.status !== 'confirmed' && (
                             <button
                               onClick={() => onStatusChange(b.id, 'confirmed')}
-                              className="p-1.5 rounded-lg bg-[rgba(74,222,128,0.1)] hover:bg-[rgba(74,222,128,0.2)] border border-[rgba(74,222,128,0.3)] text-[#4ADE80] transition-all"
+                              className="p-1.5 rounded-lg bg-[rgba(74,222,128,0.1)] hover:bg-[rgba(74,222,128,0.2)] border border-[rgba(74,222,128,0.3)] text-[var(--green)] transition-all"
                               title="تأكيد الحجز"
                             >
                               <CheckCircle className="w-4 h-4" />
@@ -190,7 +190,7 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
                           {b.status !== 'cancelled' && (
                             <button
                               onClick={() => onStatusChange(b.id, 'cancelled')}
-                              className="p-1.5 rounded-lg bg-[rgba(245,158,11,0.1)] hover:bg-[rgba(245,158,11,0.2)] border border-[rgba(245,158,11,0.3)] text-amber-400 transition-all"
+                              className="p-1.5 rounded-lg bg-[rgba(245,158,11,0.1)] hover:bg-[rgba(245,158,11,0.2)] border border-[rgba(245,158,11,0.3)] text-amber-500 transition-all"
                               title="إلغاء الحجز"
                             >
                               <XCircle className="w-4 h-4" />
@@ -198,7 +198,7 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
                           )}
                           <button
                             onClick={() => onDeleteBooking(b.id)}
-                            className="p-1.5 rounded-lg bg-[rgba(244,63,94,0.1)] hover:bg-[rgba(244,63,94,0.2)] border border-[rgba(244,63,94,0.3)] text-rose-400 transition-all"
+                            className="p-1.5 rounded-lg bg-[rgba(244,63,94,0.1)] hover:bg-[rgba(244,63,94,0.2)] border border-[rgba(244,63,94,0.3)] text-rose-500 transition-all"
                             title="حذف من السجل"
                           >
                             <Trash2 className="w-4 h-4" />
