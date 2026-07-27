@@ -11,7 +11,7 @@ import { RoomsDirectory } from '@/components/RoomsDirectory';
 import { BookingModal } from '@/components/BookingModal';
 import { AuthModal } from '@/components/AuthModal';
 import { UsersManagement } from '@/components/UsersManagement';
-import { Sparkles, UserCheck, KeyRound, CheckCircle2, AlertTriangle, Check } from 'lucide-react';
+import { UserCheck, KeyRound, CheckCircle2, AlertTriangle, Check } from 'lucide-react';
 
 export default function Home() {
   const { lang, t } = useLanguage();
@@ -109,7 +109,9 @@ export default function Home() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[var(--bg)] text-[var(--text)]">
         <div className="w-10 h-10 border-2 border-[var(--blue)] border-t-transparent rounded-full animate-spin mb-4 shadow-lg" />
-        <p className="text-xs font-mono text-[var(--text-dim)] tracking-widest uppercase">CONNECTING TO MISKRESERVE SYSTEM…</p>
+        <p className="text-xs font-mono text-[var(--text-dim)] tracking-widest uppercase">
+          {lang === 'ar' ? 'جاري التحقق من أمان وجلسة المستخدم...' : 'CONNECTING TO MISKRESERVE SYSTEM…'}
+        </p>
       </div>
     );
   }
@@ -136,7 +138,7 @@ export default function Home() {
               
               {/* Desktop Commander Status Line */}
               <div className="font-mono text-[11px] tracking-[0.2em] uppercase text-[var(--green)] mb-4">
-                ✓ NEON DATABASE CONNECTED · SYSTEM READY
+                {t.lockScreen.statusReady}
               </div>
 
               {/* Big Pulsing Ring Checkmark */}
@@ -145,20 +147,24 @@ export default function Home() {
               </div>
 
               <h1 className="text-3xl sm:text-5xl font-extrabold text-[var(--text)] tracking-tight leading-tight pt-2">
-                أهلاً بك في نظام <span className="gradient-text">مِسك رُومز</span>
+                {lang === 'ar' ? (
+                  <>أهلاً بك في نظام <span className="gradient-text">مِسك رُومز</span></>
+                ) : (
+                  <>Welcome to <span className="gradient-text">MiskReserve</span></>
+                )}
               </h1>
 
               <p className="text-sm sm:text-base text-[var(--text-dim)] leading-relaxed max-w-xl mx-auto">
-                السجل الإلكتروني المعزز لشركة <strong className="text-[var(--text)]">MiskTech</strong> لتنظيم قاعات الاجتماعات والتدريب وضمان عدم تضارب الحجوزات. الحسابات متاحة للموظفين المعتمدين.
+                {t.lockScreen.description}
               </p>
 
               {/* Pending approval notice if registered */}
               {user && user.status === 'pending' && (
-                <div className="p-4 rounded-2xl bg-[rgba(245,158,11,0.1)] border border-[rgba(245,158,11,0.3)] text-amber-500 text-xs text-right flex items-start gap-3">
+                <div className="p-4 rounded-2xl bg-[rgba(245,158,11,0.1)] border border-[rgba(245,158,11,0.3)] text-amber-500 text-xs text-right ltr:text-left flex items-start gap-3">
                   <AlertTriangle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
                   <div>
-                    <span className="block font-bold text-sm mb-1 text-amber-600">حسابك قيد مراجعة وتفعيل الإدارة ⏳</span>
-                    <span className="text-[var(--text-dim)]">تم استلام طلب التسجيل بنجاح، يمكنك استخدام النظام فور قيام مسؤول النظم باعتتماد طلبك.</span>
+                    <span className="block font-bold text-sm mb-1 text-amber-600">{t.lockScreen.pendingNoticeTitle}</span>
+                    <span className="text-[var(--text-dim)]">{t.lockScreen.pendingNoticeDesc}</span>
                   </div>
                 </div>
               )}
@@ -170,7 +176,7 @@ export default function Home() {
                   className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[var(--text)] hover:opacity-90 text-[var(--bg)] text-sm font-bold shadow-lg hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
                 >
                   <KeyRound className="w-4 h-4 text-[var(--bg)]" />
-                  <span>تسجيل الدخول إلى النظام</span>
+                  <span>{t.lockScreen.loginBtn}</span>
                 </button>
 
                 <button
@@ -178,14 +184,14 @@ export default function Home() {
                   className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[var(--input-bg)] hover:bg-[var(--stroke)] border border-[var(--stroke)] text-[var(--text)] text-sm font-medium hover:border-[var(--blue)] transition-all flex items-center justify-center gap-2"
                 >
                   <UserCheck className="w-4 h-4 text-[var(--blue)]" />
-                  <span>إنشاء حساب موظف جديد</span>
+                  <span>{t.lockScreen.registerBtn}</span>
                 </button>
               </div>
 
               {/* Default Admin Info Tip */}
               <div className="pt-6 border-t border-[var(--stroke)] text-xs font-mono text-[var(--text-faint)] flex items-center justify-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-[var(--green)]" />
-                <span>حساب المشرف التجريبي: <strong className="text-[var(--text)]">admin@misktech.com</strong> | كلمة المرور: <strong className="text-[var(--text)]">admin123</strong></span>
+                <span>{t.lockScreen.demoTip}</span>
               </div>
 
             </div>
@@ -234,7 +240,7 @@ export default function Home() {
             </div>
 
             <h1 className="text-2xl sm:text-4xl font-extrabold text-[var(--text)] leading-tight">
-              مرحباً بك <span className="gradient-text">{user.name}</span> 👋
+              {lang === 'ar' ? `مرحباً بك ${user.name} 👋` : `Welcome back, ${user.name} 👋`}
             </h1>
             <p className="text-sm sm:text-base text-[var(--text-dim)] mt-2 leading-relaxed font-sans">
               {t.hero.subtitle} (<strong className="text-[var(--text)]">{user.entity_name}</strong>)

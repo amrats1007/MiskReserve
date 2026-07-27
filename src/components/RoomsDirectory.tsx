@@ -42,7 +42,7 @@ export const RoomsDirectory: React.FC<RoomsDirectoryProps> = ({ rooms, onSelectR
           <Building2 className="w-5 h-5 text-[var(--blue)]" />
           {t.rooms.title}
         </h2>
-        <p className="text-xs text-[var(--text-dim)] mt-1 font-sans">دليل القاعات التدريبية والاجتماعات المتاحة بالشركة والتجهيزات التقنية المتاحة بكل قاعة</p>
+        <p className="text-xs text-[var(--text-dim)] mt-1 font-sans">{t.rooms.subtitle}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -66,12 +66,12 @@ export const RoomsDirectory: React.FC<RoomsDirectoryProps> = ({ rooms, onSelectR
                     <div>
                       <h3 className="text-lg font-bold text-[var(--text)]">{name}</h3>
                       <span className="text-xs text-[var(--blue)] font-mono">
-                        CODE: {room.code}
+                        {t.rooms.code}: {room.code}
                       </span>
                     </div>
                   </div>
                   <span className="px-3 py-1 rounded-full bg-[rgba(74,222,128,0.12)] text-[var(--green)] border border-[rgba(74,222,128,0.3)] font-mono text-xs font-bold">
-                    ● READY
+                    ● {t.rooms.readyStatus}
                   </span>
                 </div>
 
@@ -79,7 +79,7 @@ export const RoomsDirectory: React.FC<RoomsDirectoryProps> = ({ rooms, onSelectR
                 <div className="grid grid-cols-2 gap-3 py-4 text-xs font-mono text-[var(--text-dim)]">
                   <div className="flex items-center gap-2">
                     <Users className="w-4 h-4 text-[var(--blue)]" />
-                    <span>CAPACITY: {room.capacity}</span>
+                    <span>{t.rooms.capacity}: {room.capacity} {lang === 'ar' ? 'فرد' : 'pax'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-[var(--blue)]" />
@@ -90,7 +90,7 @@ export const RoomsDirectory: React.FC<RoomsDirectoryProps> = ({ rooms, onSelectR
                 {/* Equipment Badges */}
                 <div className="pt-2">
                   <h4 className="text-[11px] font-mono font-semibold text-[var(--text-faint)] mb-2 uppercase tracking-wider">
-                    EQUIPMENT & AMENITIES:
+                    {t.rooms.equipmentHeader}
                   </h4>
                   <div className="flex flex-wrap gap-2">
                     {(room.amenities || []).map((eq) => {
@@ -117,7 +117,7 @@ export const RoomsDirectory: React.FC<RoomsDirectoryProps> = ({ rooms, onSelectR
                   onClick={() => onSelectRoomForBooking(room.id)}
                   className="w-full py-3 rounded-xl bg-[var(--input-bg)] hover:bg-[var(--text)] border border-[var(--stroke)] hover:border-[var(--text)] text-[var(--text)] hover:text-[var(--bg)] text-xs font-bold transition-all shadow-lg"
                 >
-                  حجز هذه القاعة الآن →
+                  {t.rooms.bookNow}
                 </button>
               </div>
 

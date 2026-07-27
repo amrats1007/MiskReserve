@@ -33,7 +33,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           className="flex items-center gap-3 cursor-pointer group" 
           onClick={() => isApproved && setActiveTab('calendar')}
         >
-          <div className="w-8 h-8 rounded-lg bg-[var(--text)] color-[var(--bg)] font-mono font-bold text-xs flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300">
+          <div className="w-8 h-8 rounded-lg bg-[var(--text)] text-[var(--bg)] font-mono font-bold text-xs flex items-center justify-center shadow-md group-hover:scale-105 transition-transform duration-300">
             MR
           </div>
           <div>
@@ -99,7 +99,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }`}
               >
                 <ShieldCheck className="w-3.5 h-3.5 text-[var(--cyan)]" />
-                <span>إدارة الحسابات</span>
+                <span>{t.nav.users}</span>
               </button>
             )}
           </nav>
@@ -110,14 +110,14 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* User Profile Badge (when logged in) */}
           {user && (
             <div className="flex items-center gap-2.5 bg-[var(--input-bg)] border border-[var(--stroke)] px-3 py-1.5 rounded-xl">
-              <div className="flex flex-col text-right">
+              <div className="flex flex-col text-right ltr:text-left">
                 <span className="text-xs font-bold text-[var(--text)] truncate max-w-[110px]">{user.name}</span>
                 <span className="text-[10px] text-[var(--blue)] font-mono">{user.entity_name}</span>
               </div>
               <button
                 onClick={logout}
                 className="p-1 rounded-lg hover:bg-[rgba(244,63,94,0.15)] text-[var(--text-dim)] hover:text-[#F43F5E] transition-all"
-                title="تسجيل الخروج"
+                title={t.nav.logout}
               >
                 <LogOut className="w-3.5 h-3.5" />
               </button>
@@ -128,7 +128,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           <button
             onClick={toggleTheme}
             className="p-2 rounded-xl bg-[var(--input-bg)] hover:bg-[var(--stroke)] border border-[var(--stroke)] text-[var(--text)] transition-all flex items-center justify-center"
-            title={theme === 'dark' ? 'الانتقال إلى الثيم الفاتح' : 'الانتقال إلى الثيم الداكن'}
+            title={
+              theme === 'dark'
+                ? (lang === 'ar' ? 'الانتقال إلى الثيم الفاتح' : 'Switch to Light Mode')
+                : (lang === 'ar' ? 'الانتقال إلى الثيم الداكن' : 'Switch to Dark Mode')
+            }
           >
             {theme === 'dark' ? (
               <Sun className="w-4 h-4 text-[#F59E0B] hover:rotate-45 transition-transform" />
@@ -198,7 +202,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <ShieldCheck className="w-3.5 h-3.5" />
-              الحسابات
+              {t.nav.users}
             </button>
           )}
         </div>

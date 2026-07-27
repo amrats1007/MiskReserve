@@ -47,7 +47,8 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
       (b.booker_name && b.booker_name.toLowerCase().includes(q)) ||
       (b.entity_name && b.entity_name.toLowerCase().includes(q)) ||
       (b.event_title && b.event_title.toLowerCase().includes(q)) ||
-      (b.room_name_ar && b.room_name_ar.toLowerCase().includes(q));
+      (b.room_name_ar && b.room_name_ar.toLowerCase().includes(q)) ||
+      (b.room_name_en && b.room_name_en.toLowerCase().includes(q));
 
     return matchesStatus && matchesSearch;
   });
@@ -108,14 +109,14 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
         {/* Printable Header Title */}
         <div className="hidden print-only text-center mb-6">
           <h1 className="text-2xl font-bold text-black">{t.logbook.printTitle}</h1>
-          <p className="text-sm text-gray-600">تاريخ الطباعة: {new Date().toLocaleDateString('ar-EG')}</p>
+          <p className="text-sm text-gray-600">{t.logbook.printDate}: {new Date().toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US')}</p>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-right text-xs">
+          <table className="w-full text-right ltr:text-left text-xs">
             <thead className="bg-[var(--input-bg)] text-[var(--text-dim)] font-mono font-bold uppercase tracking-wider border-b border-[var(--stroke)]">
               <tr>
-                <th className="p-3">#</th>
+                <th className="p-3">{t.logbook.tableHeader.id}</th>
                 <th className="p-3">{t.logbook.tableHeader.date}</th>
                 <th className="p-3">{t.logbook.tableHeader.time}</th>
                 <th className="p-3">{t.logbook.tableHeader.room}</th>
@@ -150,10 +151,10 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
                       </td>
                       <td className="p-3 font-bold text-[var(--text)] whitespace-nowrap">
                         <span
-                          className="inline-block w-2.5 h-2.5 rounded-full ml-1.5 shadow-[0_0_8px_currentColor]"
+                          className="inline-block w-2.5 h-2.5 rounded-full mx-1.5 shadow-[0_0_8px_currentColor]"
                           style={{ backgroundColor: b.room_color || '#7DA9FF', color: b.room_color || '#7DA9FF' }}
                         />
-                        {roomName || `قاعة #${b.room_id}`}
+                        {roomName || (lang === 'ar' ? `قاعة #${b.room_id}` : `Room #${b.room_id}`)}
                       </td>
                       <td className="p-3 text-[var(--text)] font-semibold">{b.booker_name}</td>
                       <td className="p-3 text-[var(--violet)] font-mono">{b.entity_name}</td>
@@ -182,7 +183,7 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
                             <button
                               onClick={() => onStatusChange(b.id, 'confirmed')}
                               className="p-1.5 rounded-lg bg-[rgba(74,222,128,0.1)] hover:bg-[rgba(74,222,128,0.2)] border border-[rgba(74,222,128,0.3)] text-[var(--green)] transition-all"
-                              title="تأكيد الحجز"
+                              title={t.logbook.actionsTooltip.confirm}
                             >
                               <CheckCircle className="w-4 h-4" />
                             </button>
@@ -191,7 +192,7 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
                             <button
                               onClick={() => onStatusChange(b.id, 'cancelled')}
                               className="p-1.5 rounded-lg bg-[rgba(245,158,11,0.1)] hover:bg-[rgba(245,158,11,0.2)] border border-[rgba(245,158,11,0.3)] text-amber-500 transition-all"
-                              title="إلغاء الحجز"
+                              title={t.logbook.actionsTooltip.cancel}
                             >
                               <XCircle className="w-4 h-4" />
                             </button>
@@ -199,7 +200,7 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
                           <button
                             onClick={() => onDeleteBooking(b.id)}
                             className="p-1.5 rounded-lg bg-[rgba(244,63,94,0.1)] hover:bg-[rgba(244,63,94,0.2)] border border-[rgba(244,63,94,0.3)] text-rose-500 transition-all"
-                            title="حذف من السجل"
+                            title={t.logbook.actionsTooltip.delete}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>

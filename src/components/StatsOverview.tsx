@@ -36,7 +36,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({ stats }) => {
         </div>
         <div className="mt-3 relative z-10 flex items-baseline justify-between">
           <span className="text-3xl font-bold text-[var(--text)] font-mono tracking-tight">{stats.totalBookings}</span>
-          <span className="text-[11px] text-[var(--blue)] font-mono">سجل الكتروني</span>
+          <span className="text-[11px] text-[var(--blue)] font-mono">{t.stats.electronicLedger}</span>
         </div>
       </div>
 
@@ -50,7 +50,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({ stats }) => {
         </div>
         <div className="mt-3 relative z-10 flex items-baseline justify-between">
           <span className="text-3xl font-bold text-[var(--green)] font-mono tracking-tight">{stats.todayBookings}</span>
-          <span className="text-[11px] text-[var(--green)] font-mono">● نشطة اليوم</span>
+          <span className="text-[11px] text-[var(--green)] font-mono">{t.stats.activeTodayTag}</span>
         </div>
       </div>
 
@@ -65,7 +65,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({ stats }) => {
         <div className="mt-3 relative z-10">
           <span className="text-base font-bold text-[var(--text)] truncate block">{busiestRoomName}</span>
           <span className="text-[11px] text-[var(--violet)] font-mono">
-            {stats.busiestRoom ? `${stats.busiestRoom.booking_count} حجز` : '-'}
+            {stats.busiestRoom ? `${stats.busiestRoom.booking_count} ${t.stats.bookingsCount}` : '-'}
           </span>
         </div>
       </div>
@@ -82,7 +82,7 @@ export const StatsOverview: React.FC<StatsOverviewProps> = ({ stats }) => {
           <span className="text-base font-bold text-[var(--text)] truncate block">
             {stats.topEntity ? stats.topEntity.entity_name : '-'}
           </span>
-          <span className="text-[11px] text-[var(--cyan)] font-mono">الأكثر حجزاً</span>
+          <span className="text-[11px] text-[var(--cyan)] font-mono">{t.stats.topEntityTag}</span>
         </div>
       </div>
 

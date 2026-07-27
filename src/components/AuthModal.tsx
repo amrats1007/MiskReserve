@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
 import { useAuth } from '@/context/AuthContext';
 import { X, LogIn, UserPlus, Mail, Lock, User, Building2, Phone, AlertCircle, Clock } from 'lucide-react';
 
 export const AuthModal: React.FC = () => {
+  const { lang, t } = useLanguage();
   const { isAuthModalOpen, closeAuthModal, authModalDefaultTab, login, register } = useAuth();
 
   const [tab, setTab] = useState<'login' | 'register'>('login');
@@ -39,7 +41,7 @@ export const AuthModal: React.FC = () => {
     setSubmitting(false);
 
     if (!res.success) {
-      setErrorMessage(res.message || 'فشل تسجيل الدخول.');
+      setErrorMessage(res.message || (lang === 'ar' ? 'فشل تسجيل الدخول.' : 'Authentication failed.'));
     }
   };
 
@@ -53,29 +55,32 @@ export const AuthModal: React.FC = () => {
     setSubmitting(false);
 
     if (res.success) {
-      setSuccessMessage('تم إرسال طلب إنشاء الحساب بنجاح! حسابك الآن قيد مراجعة واعتماد الإدارة قبل تسجيل الدخول.');
+      setSuccessMessage(lang === 'ar' 
+        ? 'تم إرسال طلب إنشاء الحساب بنجاح! حسابك الآن قيد مراجعة واعتماد الإدارة قبل تسجيل الدخول.'
+        : 'Registration request submitted! Your account is pending admin approval before sign in.'
+      );
       setName('');
       setPassword('');
       setPhone('');
     } else {
-      setErrorMessage(res.message || 'فشل إنشاء الحساب.');
+      setErrorMessage(res.message || (lang === 'ar' ? 'فشل إنشاء الحساب.' : 'Registration failed.'));
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#07080B]/80 backdrop-blur-xl p-4 overflow-y-auto">
-      <div className="relative w-full max-w-md glass-panel bg-[#0a0b0f]/95 rounded-3xl p-6 sm:p-8 border border-[var(--stroke-bright)] shadow-[0_0_80px_rgba(0,0,0,0.8)] animate-in fade-in zoom-in duration-200 text-white">
+      <div className="relative w-full max-w-md glass-panel bg-[var(--glass-bright)] rounded-3xl p-6 sm:p-8 border border-[var(--stroke-bright)] shadow-2xl animate-in fade-in zoom-in duration-200 text-[var(--text)]">
         
         {/* Close Button */}
         <button
           onClick={closeAuthModal}
-          className="absolute left-5 top-5 p-2 rounded-xl bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)] text-[#A2A7B3] hover:text-white transition-all border border-[var(--stroke)]"
+          className="absolute left-5 top-5 ltr:left-auto ltr:right-5 p-2 rounded-xl bg-[var(--input-bg)] hover:bg-[var(--stroke)] text-[var(--text-dim)] hover:text-[var(--text)] transition-all border border-[var(--stroke)]"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Header Tabs */}
-        <div className="flex items-center gap-2 p-1.5 bg-[rgba(255,255,255,0.03)] rounded-2xl border border-[var(--stroke)] mb-6 mt-2">
+        <div className="flex items-center gap-2 p-1.5 bg-[var(--input-bg)] rounded-2xl border border-[var(--stroke)] mb-6 mt-2">
           <button
             onClick={() => {
               setTab('login');
@@ -84,12 +89,12 @@ export const AuthModal: React.FC = () => {
             }}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${
               tab === 'login'
-                ? 'bg-[#F4F5F7] text-[#07080B] shadow-[0_0_20px_rgba(255,255,255,0.2)]'
-                : 'text-[#A2A7B3] hover:text-white'
+                ? 'bg-[var(--text)] text-[var(--bg)] shadow-md'
+                : 'text-[var(--text-dim)] hover:text-[var(--text)]'
             }`}
           >
             <LogIn className="w-4 h-4" />
-            <span>تسجيل الدخول</span>
+            <span>{t.authModal.loginTab}</span>
           </button>
 
           <button
@@ -100,28 +105,28 @@ export const AuthModal: React.FC = () => {
             }}
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${
               tab === 'register'
-                ? 'bg-[#F4F5F7] text-[#07080B] shadow-[0_0_20px_rgba(255,255,255,0.2)]'
-                : 'text-[#A2A7B3] hover:text-white'
+                ? 'bg-[var(--text)] text-[var(--bg)] shadow-md'
+                : 'text-[var(--text-dim)] hover:text-[var(--text)]'
             }`}
           >
             <UserPlus className="w-4 h-4" />
-            <span>حساب جديد</span>
+            <span>{t.authModal.registerTab}</span>
           </button>
         </div>
 
         {/* Notifications / Alerts */}
         {errorMessage && (
-          <div className="mb-5 p-4 rounded-2xl bg-[rgba(244,63,94,0.1)] border border-[rgba(244,63,94,0.3)] text-rose-200 text-xs flex items-start gap-2.5 leading-relaxed">
-            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+          <div className="mb-5 p-4 rounded-2xl bg-[rgba(244,63,94,0.1)] border border-[rgba(244,63,94,0.3)] text-rose-500 text-xs flex items-start gap-2.5 leading-relaxed">
+            <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
             <span>{errorMessage}</span>
           </div>
         )}
 
         {successMessage && (
-          <div className="mb-5 p-4 rounded-2xl bg-[rgba(245,158,11,0.1)] border border-[rgba(245,158,11,0.3)] text-amber-200 text-xs flex items-start gap-2.5 leading-relaxed">
-            <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+          <div className="mb-5 p-4 rounded-2xl bg-[rgba(245,158,11,0.1)] border border-[rgba(245,158,11,0.3)] text-amber-500 text-xs flex items-start gap-2.5 leading-relaxed">
+            <Clock className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
             <div>
-              <strong className="block font-bold mb-1">طلبك قيد الاعتماد:</strong>
+              <strong className="block font-bold mb-1">{lang === 'ar' ? 'طلبك قيد الاعتماد:' : 'Pending Approval:'}</strong>
               <span>{successMessage}</span>
             </div>
           </div>
@@ -131,9 +136,9 @@ export const AuthModal: React.FC = () => {
         {tab === 'login' && (
           <form onSubmit={handleLoginSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-mono text-[#A2A7B3] mb-1.5 flex items-center gap-1.5">
-                <Mail className="w-3.5 h-3.5 text-[#7DA9FF]" />
-                البريد الإلكتروني *
+              <label className="block text-xs font-mono text-[var(--text-dim)] mb-1.5 flex items-center gap-1.5">
+                <Mail className="w-3.5 h-3.5 text-[var(--blue)]" />
+                {t.authModal.email}
               </label>
               <input
                 type="email"
@@ -146,9 +151,9 @@ export const AuthModal: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-[#A2A7B3] mb-1.5 flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-[#7DA9FF]" />
-                كلمة المرور *
+              <label className="block text-xs font-mono text-[var(--text-dim)] mb-1.5 flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-[var(--blue)]" />
+                {t.authModal.password}
               </label>
               <input
                 type="password"
@@ -164,14 +169,14 @@ export const AuthModal: React.FC = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3 rounded-xl bg-[#F4F5F7] hover:bg-white text-[#07080B] text-xs font-bold shadow-[0_0_25px_rgba(255,255,255,0.2)] hover:shadow-[0_0_35px_rgba(125,169,255,0.4)] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl bg-[var(--text)] hover:opacity-90 text-[var(--bg)] text-xs font-bold shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {submitting ? (
-                  <span>جاري التحقق...</span>
+                  <span>{t.authModal.loggingIn}</span>
                 ) : (
                   <>
                     <LogIn className="w-4 h-4" />
-                    <span>الدخول إلى النظام</span>
+                    <span>{t.authModal.submitLogin}</span>
                   </>
                 )}
               </button>
@@ -183,24 +188,24 @@ export const AuthModal: React.FC = () => {
         {tab === 'register' && (
           <form onSubmit={handleRegisterSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-mono text-[#A2A7B3] mb-1.5 flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-[#7DA9FF]" />
-                الاسم الكامل *
+              <label className="block text-xs font-mono text-[var(--text-dim)] mb-1.5 flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-[var(--blue)]" />
+                {t.authModal.fullName}
               </label>
               <input
                 type="text"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="م. محمد عبد الله"
+                placeholder={lang === 'ar' ? 'م. محمد عبد الله' : 'Eng. Mohammed Abdullah'}
                 className="w-full px-4 py-2.5 rounded-xl glass-input text-sm"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-[#A2A7B3] mb-1.5 flex items-center gap-1.5">
-                <Mail className="w-3.5 h-3.5 text-[#7DA9FF]" />
-                البريد الإلكتروني *
+              <label className="block text-xs font-mono text-[var(--text-dim)] mb-1.5 flex items-center gap-1.5">
+                <Mail className="w-3.5 h-3.5 text-[var(--blue)]" />
+                {t.authModal.email}
               </label>
               <input
                 type="email"
@@ -213,9 +218,9 @@ export const AuthModal: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-[#A2A7B3] mb-1.5 flex items-center gap-1.5">
-                <Lock className="w-3.5 h-3.5 text-[#7DA9FF]" />
-                كلمة المرور *
+              <label className="block text-xs font-mono text-[var(--text-dim)] mb-1.5 flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5 text-[var(--blue)]" />
+                {t.authModal.password}
               </label>
               <input
                 type="password"
@@ -230,23 +235,23 @@ export const AuthModal: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-mono text-[#A2A7B3] mb-1.5 flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5 text-[#7DA9FF]" />
-                  الجهة / الإدارة
+                <label className="block text-xs font-mono text-[var(--text-dim)] mb-1.5 flex items-center gap-1.5">
+                  <Building2 className="w-3.5 h-3.5 text-[var(--blue)]" />
+                  {t.authModal.entityName}
                 </label>
                 <input
                   type="text"
                   value={entityName}
                   onChange={(e) => setEntityName(e.target.value)}
-                  placeholder="إدارة نظم المعلومات"
+                  placeholder={lang === 'ar' ? 'إدارة نظم المعلومات' : 'IT Department'}
                   className="w-full px-3.5 py-2.5 rounded-xl glass-input text-xs"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-[#A2A7B3] mb-1.5 flex items-center gap-1.5">
-                  <Phone className="w-3.5 h-3.5 text-[#7DA9FF]" />
-                  رقم الجوال
+                <label className="block text-xs font-mono text-[var(--text-dim)] mb-1.5 flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-[var(--blue)]" />
+                  {t.authModal.phone}
                 </label>
                 <input
                   type="tel"
@@ -262,14 +267,14 @@ export const AuthModal: React.FC = () => {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-3 rounded-xl bg-[#F4F5F7] hover:bg-white text-[#07080B] text-xs font-bold shadow-[0_0_25px_rgba(255,255,255,0.2)] hover:shadow-[0_0_35px_rgba(125,169,255,0.4)] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl bg-[var(--text)] hover:opacity-90 text-[var(--bg)] text-xs font-bold shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {submitting ? (
-                  <span>جاري إرسال الطلب...</span>
+                  <span>{t.authModal.submittingRegister}</span>
                 ) : (
                   <>
                     <UserPlus className="w-4 h-4" />
-                    <span>إرسال طلب التسجيل للمراجعة</span>
+                    <span>{t.authModal.submitRegister}</span>
                   </>
                 )}
               </button>
