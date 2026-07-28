@@ -2,22 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
+import { User } from '@/lib/types';
 import { Users, CheckCircle, XCircle, Trash2, Clock, Search, Shield, AlertCircle, RefreshCw } from 'lucide-react';
-
-interface UserRecord {
-  id: number;
-  name: string;
-  email: string;
-  entity_name: string;
-  phone?: string;
-  role: 'admin' | 'user';
-  status: 'pending' | 'approved' | 'rejected';
-  created_at: string;
-}
 
 export const UsersManagement: React.FC = () => {
   const { lang, t } = useLanguage();
-  const [users, setUsers] = useState<UserRecord[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('pending');
@@ -256,7 +246,7 @@ export const UsersManagement: React.FC = () => {
                     <td className="p-3 text-[var(--violet)] font-mono">{u.entity_name || '-'}</td>
                     <td className="p-3 text-[var(--text-dim)] font-mono">{u.phone || '-'}</td>
                     <td className="p-3 text-[var(--text-dim)] whitespace-nowrap font-mono">
-                      {new Date(u.created_at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US')}
+                      {u.created_at ? new Date(u.created_at).toLocaleDateString(lang === 'ar' ? 'ar-EG' : 'en-US') : '-'}
                     </td>
                     <td className="p-3 whitespace-nowrap">
                       {u.status === 'approved' && (

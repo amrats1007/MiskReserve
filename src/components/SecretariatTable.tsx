@@ -2,31 +2,14 @@
 
 import React, { useState } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { Search, CheckCircle, XCircle, Trash2, Printer, Calendar, AlertCircle } from 'lucide-react';
-
-interface Booking {
-  id: number;
-  room_id: number;
-  room_name_ar?: string;
-  room_name_en?: string;
-  room_color?: string;
-  booker_name: string;
-  entity_name: string;
-  event_title: string;
-  event_type: string;
-  booking_date: string;
-  start_time: string;
-  end_time: string;
-  attendees_count: number;
-  requested_equipment?: string[];
-  notes?: string;
-  status: string;
-}
+import { Booking } from '@/lib/types';
+import { Search, CheckCircle, XCircle, Trash2, Printer, Calendar, AlertCircle, Edit, Download } from 'lucide-react';
 
 interface SecretariatTableProps {
   bookings: Booking[];
   onStatusChange: (id: number, status: string) => void;
   onDeleteBooking: (id: number) => void;
+  onEditBooking: (booking: Booking) => void;
   onPrint: () => void;
 }
 
@@ -34,14 +17,23 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
   bookings,
   onStatusChange,
   onDeleteBooking,
+  onEditBooking,
   onPrint
 }) => {
   const { lang, t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   const filteredBookings = bookings.filter(b => {
     const matchesStatus = statusFilter === 'all' || b.status === statusFilter;
+    
+    // Date range filter
+    const bDate = b.booking_date ? b.booking_date.substring(0, 10) : '';
+    const matchesStartDate = !startDate || bDate >= startDate;
+    const matchesEndDate = !endDate || bDate <= endDate;
+
     const q = searchTerm.toLowerCase();
     const matchesSearch = !searchTerm ||
       (b.booker_name && b.booker_name.toLowerCase().includes(q)) ||
@@ -50,8 +42,48 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
       (b.room_name_ar && b.room_name_ar.toLowerCase().includes(q)) ||
       (b.room_name_en && b.room_name_en.toLowerCase().includes(q));
 
-    return matchesStatus && matchesSearch;
+    return matchesStatus && matchesStartDate && matchesEndDate && matchesSearch;
   });
+
+  const handleExportCsv = () => {
+    if (filteredBookings.length === 0) return;
+
+    const headers = [
+      'ID',
+      'Date',
+      'Start Time',
+      'End Time',
+      'Room',
+      'Booker Name',
+      'Entity',
+      'Event Title',
+      'Attendees',
+      'Status'
+    ];
+
+    const rows = filteredBookings.map(b => [
+      b.id,
+      b.booking_date ? new Date(b.booking_date).toISOString().split('T')[0] : '',
+      b.start_time ? b.start_time.substring(0, 5) : '',
+      b.end_time ? b.end_time.substring(0, 5) : '',
+      `"${lang === 'ar' ? (b.room_name_ar || b.room_id) : (b.room_name_en || b.room_id)}"`,
+      `"${b.booker_name || ''}"`,
+      `"${b.entity_name || ''}"`,
+      `"${b.event_title || ''}"`,
+      b.attendees_count || 1,
+      b.status
+    ]);
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `misk_reserve_logbook_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="space-y-6">
@@ -66,17 +98,62 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
           <p className="text-xs text-[var(--text-dim)] mt-1 font-sans">{t.logbook.subtitle}</p>
         </div>
 
-        {/* Search & Filter Inputs */}
+        {/* Action Controls */}
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          {/* Search Box */}
-          <div className="relative flex-1 md:w-64">
-            <Search className="w-4 h-4 text-[var(--text-dim)] absolute left-3 top-3" />
+          {/* Export CSV Button */}
+          <button
+            onClick={handleExportCsv}
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[var(--input-bg)] hover:bg-[var(--stroke)] text-[var(--text)] text-xs font-mono font-medium border border-[var(--stroke)] transition-all shadow-lg"
+          >
+            <Download className="w-4 h-4 text-[var(--green)]" />
+            <span>{t.nav.exportCsv}</span>
+          </button>
+
+          {/* Print Button */}
+          <button
+            onClick={onPrint}
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[var(--input-bg)] hover:bg-[var(--stroke)] text-[var(--text)] text-xs font-mono font-medium border border-[var(--stroke)] transition-all shadow-lg"
+          >
+            <Printer className="w-4 h-4 text-[var(--blue)]" />
+            <span>{t.nav.printLogbook}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Search & Date Filter Bar */}
+      <div className="glass-panel p-4 rounded-2xl border border-[var(--stroke)] flex flex-col lg:flex-row items-center justify-between gap-3">
+        
+        {/* Search Box */}
+        <div className="relative w-full lg:w-72">
+          <Search className="w-4 h-4 text-[var(--text-dim)] absolute left-3 top-3" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder={t.filter.searchPlaceholder}
+            className="w-full pl-9 pr-4 py-2 rounded-xl glass-input text-xs font-mono"
+          />
+        </div>
+
+        {/* Date Range Inputs */}
+        <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+          <div className="flex items-center gap-1 bg-[var(--input-bg)] px-3 py-1.5 rounded-xl border border-[var(--stroke)] text-xs font-mono text-[var(--text-dim)]">
+            <span>{t.filter.startDate}:</span>
             <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder={t.filter.searchPlaceholder}
-              className="w-full pl-9 pr-4 py-2 rounded-xl glass-input text-xs font-mono"
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="bg-transparent text-[var(--text)] focus:outline-none"
+            />
+          </div>
+
+          <div className="flex items-center gap-1 bg-[var(--input-bg)] px-3 py-1.5 rounded-xl border border-[var(--stroke)] text-xs font-mono text-[var(--text-dim)]">
+            <span>{t.filter.endDate}:</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="bg-transparent text-[var(--text)] focus:outline-none"
             />
           </div>
 
@@ -91,16 +168,8 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
             <option value="pending">{t.filter.pending}</option>
             <option value="cancelled">{t.filter.cancelled}</option>
           </select>
-
-          {/* Print Button */}
-          <button
-            onClick={onPrint}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--input-bg)] hover:bg-[var(--stroke)] text-[var(--text)] text-xs font-mono font-medium border border-[var(--stroke)] transition-all shadow-lg"
-          >
-            <Printer className="w-4 h-4 text-[var(--blue)]" />
-            <span>{t.nav.printLogbook}</span>
-          </button>
         </div>
+
       </div>
 
       {/* Logbook Table Card */}
@@ -179,6 +248,15 @@ export const SecretariatTable: React.FC<SecretariatTableProps> = ({
                       </td>
                       <td className="p-3 text-center whitespace-nowrap no-print">
                         <div className="flex items-center justify-center gap-1.5">
+                          {/* Edit Action Button */}
+                          <button
+                            onClick={() => onEditBooking(b)}
+                            className="p-1.5 rounded-lg bg-[rgba(125,169,255,0.1)] hover:bg-[rgba(125,169,255,0.2)] border border-[rgba(125,169,255,0.3)] text-[var(--blue)] transition-all"
+                            title={t.logbook.actionsTooltip.edit}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+
                           {b.status !== 'confirmed' && (
                             <button
                               onClick={() => onStatusChange(b.id, 'confirmed')}

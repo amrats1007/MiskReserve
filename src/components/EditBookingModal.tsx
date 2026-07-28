@@ -2,42 +2,36 @@
 
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { useAuth } from '@/context/AuthContext';
-import { Room } from '@/lib/types';
+import { Room, Booking } from '@/lib/types';
 import { X, AlertTriangle, CheckCircle2, Calendar, Clock, Users, Building2, User, FileText, Check, Tv, Mic, Monitor, Coffee, Video } from 'lucide-react';
 
-interface BookingModalProps {
+interface EditBookingModalProps {
   isOpen: boolean;
   onClose: () => void;
+  booking: Booking | null;
   rooms: Room[];
-  onBookingSuccess: () => void;
-  initialRoomId?: number | null;
-  initialDate?: string | null;
-  initialStartTime?: string | null;
+  onBookingUpdated: () => void;
 }
 
-export const BookingModal: React.FC<BookingModalProps> = ({
+export const EditBookingModal: React.FC<EditBookingModalProps> = ({
   isOpen,
   onClose,
+  booking,
   rooms,
-  onBookingSuccess,
-  initialRoomId,
-  initialDate,
-  initialStartTime
+  onBookingUpdated
 }) => {
   const { lang, t } = useLanguage();
-  const { user } = useAuth();
 
-  const [roomId, setRoomId] = useState<number>(initialRoomId || (rooms[0]?.id || 1));
-  const [bookerName, setBookerName] = useState(user?.name || '');
-  const [entityName, setEntityName] = useState(user?.entity_name || '');
+  const [roomId, setRoomId] = useState<number>(1);
+  const [bookerName, setBookerName] = useState('');
+  const [entityName, setEntityName] = useState('');
   const [eventTitle, setEventTitle] = useState('');
   const [eventType, setEventType] = useState('meeting');
-  const [bookingDate, setBookingDate] = useState(initialDate || new Date().toISOString().split('T')[0]);
-  const [startTime, setStartTime] = useState(initialStartTime || '09:00');
+  const [bookingDate, setBookingDate] = useState('');
+  const [startTime, setStartTime] = useState('09:00');
   const [endTime, setEndTime] = useState('11:00');
   const [attendeesCount, setAttendeesCount] = useState(10);
-  const [requestedEquipment, setRequestedEquipment] = useState<string[]>(['projector']);
+  const [requestedEquipment, setRequestedEquipment] = useState<string[]>([]);
   const [notes, setNotes] = useState('');
 
   const [submitting, setSubmitting] = useState(false);
@@ -45,24 +39,24 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [conflictWarning, setConflictWarning] = useState<string | null>(null);
 
   useEffect(() => {
-    if (user) {
-      if (!bookerName) setBookerName(user.name);
-      if (!entityName) setEntityName(user.entity_name);
+    if (booking) {
+      setRoomId(booking.room_id);
+      setBookerName(booking.booker_name || '');
+      setEntityName(booking.entity_name || '');
+      setEventTitle(booking.event_title || '');
+      setEventType(booking.event_type || 'meeting');
+      setBookingDate(booking.booking_date ? new Date(booking.booking_date).toISOString().split('T')[0] : '');
+      setStartTime(booking.start_time ? booking.start_time.substring(0, 5) : '09:00');
+      setEndTime(booking.end_time ? booking.end_time.substring(0, 5) : '11:00');
+      setAttendeesCount(booking.attendees_count || 10);
+      setRequestedEquipment(booking.requested_equipment || []);
+      setNotes(booking.notes || '');
+      setErrorMessage(null);
+      setConflictWarning(null);
     }
-  }, [user, isOpen]);
+  }, [booking, isOpen]);
 
-  useEffect(() => {
-    if (initialRoomId) setRoomId(initialRoomId);
-    if (initialDate) setBookingDate(initialDate);
-    if (initialStartTime) {
-      setStartTime(initialStartTime);
-      const [h, m] = initialStartTime.split(':').map(Number);
-      const endH = Math.min(h + 2, 18);
-      setEndTime(`${endH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
-    }
-  }, [initialRoomId, initialDate, initialStartTime]);
-
-  if (!isOpen) return null;
+  if (!isOpen || !booking) return null;
 
   const toggleEquipment = (eq: string) => {
     setRequestedEquipment(prev =>
@@ -78,9 +72,10 @@ export const BookingModal: React.FC<BookingModalProps> = ({
 
     try {
       const res = await fetch('/api/bookings', {
-        method: 'POST',
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          id: booking.id,
           room_id: roomId,
           booker_name: bookerName,
           entity_name: entityName,
@@ -104,12 +99,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           setErrorMessage(data.message || data.error || t.messages.errorAdd);
         }
       } else {
-        onBookingSuccess();
+        onBookingUpdated();
         onClose();
-        setBookerName('');
-        setEntityName('');
-        setEventTitle('');
-        setNotes('');
       }
     } catch (err: any) {
       setErrorMessage(t.messages.errorAdd);
@@ -127,7 +118,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           <div>
             <h2 className="text-xl sm:text-2xl font-bold text-[var(--text)] flex items-center gap-2.5">
               <Calendar className="w-5 h-5 text-[var(--blue)]" />
-              {t.modal.title}
+              {t.modal.editTitle}
             </h2>
             <p className="text-xs sm:text-sm text-[var(--text-dim)] mt-1 font-sans">{t.modal.subtitle}</p>
           </div>
@@ -160,7 +151,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
         {/* Booking Form */}
         <form onSubmit={handleSubmit} className="mt-6 space-y-6">
           
-          {/* Target Room Selection Cards */}
+          {/* Target Room Selection */}
           <div>
             <label className="block text-xs font-mono font-semibold text-[var(--text-dim)] uppercase tracking-wider mb-2">
               {t.modal.roomSelect} *
@@ -389,7 +380,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             />
           </div>
 
-          {/* Modal Footer Actions */}
+          {/* Actions */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-[var(--stroke)]">
             <button
               type="button"
@@ -409,7 +400,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
               ) : (
                 <>
                   <CheckCircle2 className="w-4 h-4" />
-                  <span>{t.modal.submit}</span>
+                  <span>{t.modal.saveChanges}</span>
                 </>
               )}
             </button>

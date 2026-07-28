@@ -3,19 +3,28 @@ import { sql } from '@/lib/db';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth';
 
-// Helper to check if caller is Admin
-async function checkIsAdmin() {
+// Helper to check if caller is Admin by querying DB directly
+async function checkIsAdmin(): Promise<{ isAdmin: boolean; userId?: number }> {
   const cookieStore = await cookies();
   const token = cookieStore.get('misk_auth_session')?.value;
-  if (!token) return false;
+  if (!token) return { isAdmin: false };
+  
   const payload = verifyToken(token);
-  return payload && payload.role === 'admin';
+  if (!payload || !payload.id) return { isAdmin: false };
+
+  // Query database directly to verify current role & approved status
+  const users = await sql`SELECT id, role, status FROM users WHERE id = ${payload.id};`;
+  if (users.length === 0) return { isAdmin: false };
+
+  const dbUser = users[0];
+  const isAdmin = dbUser.role === 'admin' && dbUser.status === 'approved';
+  return { isAdmin, userId: dbUser.id };
 }
 
 // GET /api/users - List all users & statistics
 export async function GET() {
   try {
-    const isAdmin = await checkIsAdmin();
+    const { isAdmin } = await checkIsAdmin();
     if (!isAdmin) {
       return NextResponse.json({ success: false, message: 'غير مصرح للوصول إلا للمشرفين.' }, { status: 403 });
     }
@@ -39,7 +48,7 @@ export async function GET() {
 // PATCH /api/users - Update user status or role
 export async function PATCH(req: Request) {
   try {
-    const isAdmin = await checkIsAdmin();
+    const { isAdmin } = await checkIsAdmin();
     if (!isAdmin) {
       return NextResponse.json({ success: false, message: 'غير مصرح لك بإجراء التعديلات.' }, { status: 403 });
     }
@@ -67,7 +76,7 @@ export async function PATCH(req: Request) {
 // DELETE /api/users?id=... - Delete user
 export async function DELETE(req: Request) {
   try {
-    const isAdmin = await checkIsAdmin();
+    const { isAdmin } = await checkIsAdmin();
     if (!isAdmin) {
       return NextResponse.json({ success: false, message: 'غير مصرح لك بحذف المستخدمين.' }, { status: 403 });
     }

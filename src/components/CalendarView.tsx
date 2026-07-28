@@ -2,32 +2,8 @@
 
 import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
+import { Room, Booking } from '@/lib/types';
 import { Calendar as CalendarIcon, ChevronRight, ChevronLeft, Plus, Clock } from 'lucide-react';
-
-interface Room {
-  id: number;
-  name_ar: string;
-  name_en: string;
-  code: string;
-  capacity: number;
-  location_ar: string;
-  location_en: string;
-  color: string;
-}
-
-interface Booking {
-  id: number;
-  room_id: number;
-  booker_name: string;
-  entity_name: string;
-  event_title: string;
-  event_type: string;
-  booking_date: string;
-  start_time: string;
-  end_time: string;
-  attendees_count: number;
-  status: string;
-}
 
 interface CalendarViewProps {
   rooms: Room[];
@@ -65,6 +41,11 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
   const handleToday = () => {
     setSelectedDate(new Date().toISOString().split('T')[0]);
+  };
+
+  // Dynamic grid template columns based on number of rooms
+  const gridStyle = {
+    gridTemplateColumns: `90px repeat(${Math.max(rooms.length, 1)}, minmax(140px, 1fr))`
   };
 
   return (
@@ -127,14 +108,14 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
       {/* Grid Timeline View */}
       <div className="glass-panel rounded-3xl p-4 sm:p-6 border border-[var(--stroke)] overflow-x-auto shadow-2xl">
-        <div className="min-w-[700px]">
+        <div className="min-w-[750px]">
           
-          {/* Header Row: Room Columns */}
-          <div className="grid grid-cols-5 gap-3 pb-4 border-b border-[var(--stroke)]">
+          {/* Header Row: Room Columns (Dynamic Grid) */}
+          <div className="grid gap-3 pb-4 border-b border-[var(--stroke)]" style={gridStyle}>
             {/* Time Column Header */}
             <div className="flex items-center justify-center p-3 rounded-2xl bg-[var(--input-bg)] text-xs font-mono font-bold text-[var(--text-dim)] border border-[var(--stroke)]">
-              <Clock className="w-3.5 h-3.5 text-[var(--blue)] mr-1.5" />
-              <span>TIME / الساعة</span>
+              <Clock className="w-3.5 h-3.5 text-[var(--blue)] mr-1" />
+              <span>{t.calendar.timeLabel}</span>
             </div>
 
             {/* Room Column Headers */}
@@ -167,7 +148,7 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
           {/* Time Rows */}
           <div className="divide-y divide-[var(--stroke)]">
             {HOURS.map((hour) => (
-              <div key={hour} className="grid grid-cols-5 gap-3 py-2 items-stretch min-h-[75px]">
+              <div key={hour} className="grid gap-3 py-2 items-stretch min-h-[75px]" style={gridStyle}>
                 
                 {/* Hour Label */}
                 <div className="flex items-center justify-center font-mono text-xs font-bold text-[var(--text-dim)] bg-[var(--input-bg)] rounded-xl border border-[var(--stroke)]">
@@ -176,7 +157,6 @@ export const CalendarView: React.FC<CalendarViewProps> = ({
 
                 {/* Rooms Grid for this Hour */}
                 {rooms.map((room) => {
-                  // Find booking for this room & hour
                   const roomBookings = bookings.filter(b => b.room_id === room.id && b.status !== 'cancelled');
                   const activeBooking = roomBookings.find(b => {
                     const bStart = b.start_time.substring(0, 5);

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
-import { hashPassword, createToken } from '@/lib/auth';
+import { hashPassword } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
@@ -15,7 +15,10 @@ export async function POST(req: Request) {
       );
     }
 
-    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = String(name).trim().substring(0, 150);
+    const cleanEmail = String(email).trim().toLowerCase().substring(0, 150);
+    const userEntity = entity_name ? String(entity_name).trim().substring(0, 150) : 'شركة مسك';
+    const userPhone = phone ? String(phone).trim().substring(0, 50) : '';
 
     // Check if email exists
     const existing = await sql`SELECT id FROM users WHERE LOWER(email) = ${cleanEmail};`;
@@ -26,45 +29,24 @@ export async function POST(req: Request) {
       );
     }
 
-    // Hash password
+    // Hash password with 600,000 iterations
     const hashedPassword = hashPassword(password);
-    const userEntity = entity_name || 'شركة مسك';
-    const userPhone = phone || '';
 
-    // Insert user
+    // Insert user (defaults status to 'pending')
     const result = await sql`
-      INSERT INTO users (name, email, password_hash, entity_name, phone, role)
-      VALUES (${name}, ${cleanEmail}, ${hashedPassword}, ${userEntity}, ${userPhone}, 'user')
-      RETURNING id, name, email, entity_name, phone, role;
+      INSERT INTO users (name, email, password_hash, entity_name, phone, role, status)
+      VALUES (${cleanName}, ${cleanEmail}, ${hashedPassword}, ${userEntity}, ${userPhone}, 'user', 'pending')
+      RETURNING id, name, email, entity_name, phone, role, status;
     `;
 
     const user = result[0];
 
-    // Create session token
-    const token = createToken({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      entity_name: user.entity_name,
-      role: user.role
-    });
-
-    const response = NextResponse.json({
+    // Do NOT set session cookie for pending users — user must wait for admin approval
+    return NextResponse.json({
       success: true,
-      message: 'تم إنشاء الحساب بنجاح.',
+      message: 'تم إرسال طلب إنشاء الحساب بنجاح! حسابك قيد مراجعة واعتماد الإدارة قبل تسجيل الدخول.',
       user
     });
-
-    // Set HTTP-Only Cookie
-    response.cookies.set('misk_auth_session', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 30 // 30 days
-    });
-
-    return response;
 
   } catch (error: any) {
     console.error('Register API Error:', error);

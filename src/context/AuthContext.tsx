@@ -1,16 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
-export interface User {
-  id: number;
-  name: string;
-  email: string;
-  entity_name: string;
-  phone?: string;
-  role: 'admin' | 'user';
-  status: 'pending' | 'approved' | 'rejected';
-}
+import { User } from '@/lib/types';
 
 interface AuthContextType {
   user: User | null;

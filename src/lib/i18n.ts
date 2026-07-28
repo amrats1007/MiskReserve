@@ -13,6 +13,7 @@ export const translations = {
       stats: "الإحصائيات",
       newBooking: "حجز قاعة جديد",
       printLogbook: "طباعة السجل اليومي",
+      exportCsv: "تصدير إلى Excel (CSV)",
       logout: "تسجيل الخروج"
     },
     hero: {
@@ -34,6 +35,8 @@ export const translations = {
     filter: {
       allRooms: "جميع القاعات",
       selectDate: "اختر التاريخ",
+      startDate: "تاريخ البداية",
+      endDate: "تاريخ النهاية",
       today: "اليوم",
       searchPlaceholder: "ابحث باسم الحاجز، الجهة، أو الموضوع...",
       filterByStatus: "الحالة",
@@ -44,6 +47,7 @@ export const translations = {
     },
     modal: {
       title: "تسجيل حجز قاعة جديد",
+      editTitle: "تعديل حجز القاعة",
       subtitle: "يرجى تعبئة كافة التفاصيل لمنع تضارب الحجوزات",
       bookerName: "اسم الحاجز (الموظف / الدعم الفني)",
       bookerNamePlaceholder: "مثال: م. أحمد علي - الدعم الفني",
@@ -77,6 +81,7 @@ export const translations = {
       notesPlaceholder: "أي متطلبات خاصة أو ملاحظات للدعم الفني والسكرتارية...",
       conflictWarning: "تنبيه تضارب: توجد قاعة محجوزة بالفعل في هذا الموعد! يرجى اختيار وقت آخر أو قاعة أخرى.",
       submit: "حفظ وتأكيد الحجز",
+      saveChanges: "حفظ التعديلات",
       submitting: "جاري الحفظ...",
       cancel: "إلغاء"
     },
@@ -97,6 +102,7 @@ export const translations = {
         actions: "الإجراءات"
       },
       actionsTooltip: {
+        edit: "تعديل الحجز",
         confirm: "تأكيد الحجز",
         cancel: "إلغاء الحجز",
         delete: "حذف من السجل"
@@ -183,6 +189,7 @@ export const translations = {
     },
     messages: {
       successAdd: "تم تسجيل الحجز بنجاح وحفظه في السجل الإلكتروني!",
+      successEdit: "تم تحديث بيانات الحجز بنجاح!",
       errorAdd: "حدث خطأ أثناء حفظ الحجز. يرجى المحاولة مرة أخرى.",
       successStatus: "تم تحديث حالة الحجز بنجاح.",
       deleteConfirm: "هل أنت تأكد من رغبتك في حذف هذا الحجز من السجل؟"
@@ -200,6 +207,7 @@ export const translations = {
       stats: "Analytics",
       newBooking: "New Reservation",
       printLogbook: "Print Daily Log",
+      exportCsv: "Export to Excel (CSV)",
       logout: "Log Out"
     },
     hero: {
@@ -221,6 +229,8 @@ export const translations = {
     filter: {
       allRooms: "All Rooms",
       selectDate: "Select Date",
+      startDate: "Start Date",
+      endDate: "End Date",
       today: "Today",
       searchPlaceholder: "Search by booker name, entity, title...",
       filterByStatus: "Status",
@@ -231,6 +241,7 @@ export const translations = {
     },
     modal: {
       title: "Create Room Reservation",
+      editTitle: "Edit Room Reservation",
       subtitle: "Fill in booking details to check availability and prevent clashes",
       bookerName: "Booker Name (IT Support / Staff)",
       bookerNamePlaceholder: "e.g. Eng. Ahmed Ali - IT Dept",
@@ -264,6 +275,7 @@ export const translations = {
       notesPlaceholder: "Any special setup instructions for IT & Secretariat...",
       conflictWarning: "Time Slot Conflict: Selected room is already reserved during this time slot!",
       submit: "Confirm & Book Room",
+      saveChanges: "Save Changes",
       submitting: "Saving...",
       cancel: "Cancel"
     },
@@ -284,6 +296,7 @@ export const translations = {
         actions: "Actions"
       },
       actionsTooltip: {
+        edit: "Edit Booking",
         confirm: "Confirm Booking",
         cancel: "Cancel Booking",
         delete: "Delete Record"
@@ -370,6 +383,7 @@ export const translations = {
     },
     messages: {
       successAdd: "Reservation saved successfully in the digital ledger!",
+      successEdit: "Reservation updated successfully!",
       errorAdd: "Error saving reservation. Please try again.",
       successStatus: "Reservation status updated successfully.",
       deleteConfirm: "Are you sure you want to delete this reservation from the logbook?"

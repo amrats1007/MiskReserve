@@ -9,12 +9,14 @@
 
 - 🌐 **دعم كامل للغتين (عربي / English)**: تحويل فوري بضغطة زر مع تنسيق RTL للغة العربية و LTR للإنجليزية.
 - 📖 **سجل السكرتارية الإلكتروني (Digital Logbook)**: بديل عصري لكشكول السكرتارية الورقي يعرض اسم الحاجز، اسم الجهة/الإدارة، الموضوع، التواريخ والأوقات، وملاحظات الدعم الفني.
-- 🗓️ **جدول المواعيد التفاعلي (Interactive Calendar Grid)**: يعرض ساعات اليوم (من 08:00 إلى 18:00) لكل قاعة بوضوح (الأوقات الشاغرة vs المشغولة).
+- 🗓️ **جدول المواعيد التفاعلي (Interactive Calendar Grid)**: يعرض ساعات اليوم لكل قاعة بوضوح (الأوقات الشاغرة vs المشغولة).
 - ⚡ **محرك منع تضارب الحجوزات (Conflict Detection Engine)**: يفحص السجل تلقائياً قبل الحفظ ويحذر المستخدم فورا في حال كان الوقت المطلوب مشغولا.
-- 🖨️ **إمكانية طباعة السجل اليومي (Print-Ready Schedule)**: تنسيق طباعة مخصص للسكرتارية لطباعة جدول حجوزات اليوم وتعليقه على لوحة الإعلانات.
-- 📊 **إحصائيات مباشرة (Real-time Analytics)**: استعراض إجمالي الحجوزات، الفعاليات النشطة اليوم، القاعة الأكثر طلباً، والجهة الأكثر استخداماً للقاعات.
-- 🧰 **دليل القاعات والتجهيزات التقنية (Rooms Directory)**: استعراض سعة كل قاعة والتجهيزات المتوفرة بها (بروجكتور، مايكروفون، سبورة تفاعلية، فيديو كونفرانس، ضيافة، أجهزة كمبيوتر).
-- 🐘 **قاعدة بيانات سحابية Neon PostgreSQL**: ربط مباشر مع قاعدة بيانات نيون السحابية.
+- ✏️ **تعديل وتحديث الحجوزات (Booking Editing)**: إمكانية تعديل الحجوزات القائمة بواسطة الحاجز أو المشرف.
+- 📊 **تصدير السجل إلى Excel (CSV Export)**: إكانية تصدير كافة الحجوزات أو الحجوزات المفلترة إلى ملف CSV بنقرة زر.
+- 🖨️ **طباعة السجل اليومي (Print-Ready Schedule)**: تنسيق طباعة مخصص للسكرتارية لطباعة جدول حجوزات اليوم.
+- 📊 **إحصائيات مباشرة (Real-time Analytics)**: استعراض إجمالي الحجوزات، الفعاليات النشطة اليوم، القاعة الأكثر طلباً، والجهة الأكثر استخداماً.
+- 🧰 **دليل القاعات والتجهيزات التقنية (Rooms Directory)**: استعراض سعة كل قاعة والتجهيزات المتوفرة بها.
+- 🐘 **قاعدة بيانات سحابية Neon PostgreSQL**: ربط مع قاعدة بيانات نيون السحابية.
 
 ---
 
@@ -23,61 +25,34 @@
 - **Framework**: Next.js (App Router, React 19, TypeScript)
 - **Styling**: Vanilla CSS3 + Tailwind CSS v4 + Glassmorphism Design
 - **Database**: Neon PostgreSQL via `@neondatabase/serverless`
+- **Security**: PBKDF2 Password Hashing (600k iterations) + HMAC Token Sessions
 - **Icons**: Lucide React
 - **Hosting & Deployment**: Vercel & GitHub
 
 ---
 
-## 🗄️ هيكل قاعدة البيانات (Neon Database Schema)
+## 🌐 المتغيرات البيئية (Environment Variables)
 
-مشروع Neon باسم: **`MiskReserve`** (Project ID: `dry-scene-62258910`)
+يرجى إنشاء ملف `.env.local` واستخدام المتغيرات التالية:
 
-```sql
--- جدول القاعات
-CREATE TABLE rooms (
-    id SERIAL PRIMARY KEY,
-    name_ar VARCHAR(100) NOT NULL,
-    name_en VARCHAR(100) NOT NULL,
-    code VARCHAR(20) UNIQUE NOT NULL,
-    capacity INT NOT NULL DEFAULT 10,
-    location_ar VARCHAR(150),
-    location_en VARCHAR(150),
-    amenities JSONB DEFAULT '[]'::jsonb,
-    color VARCHAR(20) DEFAULT '#6366f1',
-    is_active BOOLEAN DEFAULT true,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+```bash
+# Neon Database Connection String
+DATABASE_URL="postgresql://user:password@host/neondb?sslmode=require"
 
--- جدول الحجوزات
-CREATE TABLE bookings (
-    id SERIAL PRIMARY KEY,
-    room_id INT REFERENCES rooms(id) ON DELETE CASCADE,
-    booker_name VARCHAR(150) NOT NULL,
-    booker_email VARCHAR(150),
-    booker_phone VARCHAR(50),
-    entity_name VARCHAR(150) NOT NULL,
-    event_title VARCHAR(200) NOT NULL,
-    event_type VARCHAR(50) DEFAULT 'meeting',
-    booking_date DATE NOT NULL,
-    start_time TIME NOT NULL,
-    end_time TIME NOT NULL,
-    attendees_count INT DEFAULT 1,
-    requested_equipment JSONB DEFAULT '[]'::jsonb,
-    notes TEXT,
-    status VARCHAR(20) DEFAULT 'confirmed',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-);
+# Secret Key for Signed Cookie Sessions
+SESSION_SECRET="your-super-secret-key-here"
+
+# Secret Key for Manual DB Init Endpoint
+INIT_SECRET="your-init-secret-here"
 ```
 
 ---
 
 ## 🌐 الخطوات للرفع على Vercel (Vercel Deployment)
 
-1. ربط المشروع بمستودع GitHub: `https://github.com/amrats1007/MiskReserve.git`
-2. إضافة متغّير البيئة (Environment Variable) على Vercel:
-   - **Key**: `DATABASE_URL`
-   - **Value**: `postgresql://neondb_owner:npg_4kRYIDedXsO9@ep-soft-hall-a6af11b3-pooler.us-west-2.aws.neon.tech/neondb?channel_binding=require&sslmode=require`
-3. سيقوم Vercel بالنشر التلقائي ومزامنة أحدث التغييرات فورا.
+1. ربط المشروع بمستودع GitHub.
+2. إضافة متغيرات البيئة في Vercel Dashboard (`DATABASE_URL`, `SESSION_SECRET`, `INIT_SECRET`).
+3. النشر التلقائي ومزامنة أحدث التغييرات.
 
 ---
 تم التطوير لشركة **MiskTech - قسم الدعم الفني 2026**.

@@ -2,20 +2,8 @@
 
 import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
+import { Room } from '@/lib/types';
 import { Building2, Users, MapPin, CheckCircle, Tv, Mic, Monitor, Coffee, Video } from 'lucide-react';
-
-interface Room {
-  id: number;
-  name_ar: string;
-  name_en: string;
-  code: string;
-  capacity: number;
-  location_ar: string;
-  location_en: string;
-  amenities: string[];
-  color: string;
-  is_active: boolean;
-}
 
 interface RoomsDirectoryProps {
   rooms: Room[];

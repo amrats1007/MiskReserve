@@ -1,9 +1,24 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
-import { hashPassword } from '@/lib/auth';
+import { hashPassword, checkAuthSession } from '@/lib/auth';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const key = searchParams.get('key');
+    const secret = process.env.INIT_SECRET || 'misk-reserve-admin-init-secret-2026';
+
+    const auth = await checkAuthSession();
+    const isAdmin = auth.authenticated && auth.user?.role === 'admin';
+    const isSecretValid = key === secret;
+
+    if (!isAdmin && !isSecretValid) {
+      return NextResponse.json(
+        { success: false, message: 'Unauthorized. Admin authorization or valid init key required.' },
+        { status: 401 }
+      );
+    }
+
     // 0. Create users table
     await sql`
       CREATE TABLE IF NOT EXISTS users (
@@ -19,11 +34,10 @@ export async function GET() {
       );
     `;
 
-    // Add status column if table exists without it
     try {
       await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS status VARCHAR(20) DEFAULT 'pending';`;
     } catch (e) {
-      // Ignore if column already exists
+      // Ignore if exists
     }
 
     // 1. Create rooms table
@@ -87,11 +101,10 @@ export async function GET() {
       `;
     }
 
-    // 4. Seed sample bookings for today & tomorrow if empty
+    // 4. Seed sample bookings if empty
     const existingBookings = await sql`SELECT COUNT(*) as count FROM bookings;`;
     if (parseInt(existingBookings[0].count) === 0) {
       const todayStr = new Date().toISOString().split('T')[0];
-      
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       const tomorrowStr = tomorrow.toISOString().split('T')[0];

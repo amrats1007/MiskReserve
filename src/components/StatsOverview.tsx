@@ -2,16 +2,11 @@
 
 import React from 'react';
 import { useLanguage } from '@/context/LanguageContext';
+import { StatsData } from '@/lib/types';
 import { Calendar, CheckCircle2, Building, TrendingUp } from 'lucide-react';
 
 interface StatsOverviewProps {
-  stats: {
-    totalBookings: number;
-    todayBookings: number;
-    totalRooms: number;
-    busiestRoom: { name_ar: string; name_en: string; booking_count: number } | null;
-    topEntity: { entity_name: string; booking_count: number } | null;
-  } | null;
+  stats: StatsData | null;
 }
 
 export const StatsOverview: React.FC<StatsOverviewProps> = ({ stats }) => {
