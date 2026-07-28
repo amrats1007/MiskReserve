@@ -42,6 +42,9 @@ export interface Booking {
   requested_equipment?: string[];
   notes?: string;
   status: 'confirmed' | 'pending' | 'cancelled';
+  recurrence_type?: 'none' | 'daily' | 'weekly' | 'biweekly' | 'monthly';
+  recurrence_end_date?: string;
+  parent_booking_id?: number;
   created_at?: string;
 }
 
@@ -73,3 +76,16 @@ export interface AuthSessionPayload {
   role: 'admin' | 'user';
   status: 'pending' | 'approved' | 'rejected';
 }
+
+export interface AuditLog {
+  id: number;
+  user_id?: number;
+  user_name?: string;
+  action: string;
+  target_type: string;
+  target_id?: string;
+  details?: string;
+  ip_address?: string;
+  created_at: string;
+}
+

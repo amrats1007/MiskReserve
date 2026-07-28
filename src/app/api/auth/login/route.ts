@@ -1,9 +1,20 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { verifyPassword, createToken } from '@/lib/auth';
+import { checkRateLimit } from '@/lib/rateLimit';
+import { logAudit } from '@/lib/audit';
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+    const rateCheck = checkRateLimit(`login:${ip}`, 10, 60000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { success: false, message: 'تم تجاوز الحد المسموح من محاولات الدخول. يرجى المحاولة بعد دقيقة.' },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
     const { email, password } = body;
 
@@ -64,6 +75,16 @@ export async function POST(req: Request) {
     // Create session token
     const token = createToken(userPayload);
 
+    await logAudit({
+      userId: user.id,
+      userName: user.name,
+      action: 'USER_LOGIN',
+      targetType: 'USER',
+      targetId: user.id,
+      details: `Successful login for ${user.email}`,
+      ipAddress: ip
+    });
+
     const response = NextResponse.json({
       success: true,
       message: 'تم تسجيل الدخول بنجاح.',
@@ -89,3 +110,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

@@ -1,9 +1,21 @@
 import { NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
 import { hashPassword } from '@/lib/auth';
+import { checkRateLimit } from '@/lib/rateLimit';
+import { logAudit } from '@/lib/audit';
+import { sendNotification } from '@/lib/notifications';
 
 export async function POST(req: Request) {
   try {
+    const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+    const rateCheck = checkRateLimit(`register:${ip}`, 5, 60000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { success: false, message: 'تم تجاوز الحد المسموح من محاولات التسجيل. يرجى الانتظار دقيقة.' },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
     const { name, email, password, entity_name, phone } = body;
 
@@ -41,6 +53,24 @@ export async function POST(req: Request) {
 
     const user = result[0];
 
+    await logAudit({
+      userId: user.id,
+      userName: user.name,
+      action: 'USER_REGISTER',
+      targetType: 'USER',
+      targetId: user.id,
+      details: `New account registration request submitted for ${user.email}`,
+      ipAddress: ip
+    });
+
+    await sendNotification({
+      to: cleanEmail,
+      subject: 'تم استلام طلب تسجيل حسابك بنجاح - MiskReserve',
+      body: `مرحباً ${cleanName}، تم استلام طلب إنشاء حسابك في نظام MiskReserve وهو قيد المراجعة والاعتماد من قبل الإدارة.`,
+      type: 'user_approved',
+      metadata: { userId: user.id }
+    });
+
     // Do NOT set session cookie for pending users — user must wait for admin approval
     return NextResponse.json({
       success: true,
@@ -56,3 +86,4 @@ export async function POST(req: Request) {
     );
   }
 }
+

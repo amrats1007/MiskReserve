@@ -75,9 +75,36 @@ export async function GET(request: Request) {
         requested_equipment JSONB DEFAULT '[]'::jsonb,
         notes TEXT,
         status VARCHAR(20) DEFAULT 'confirmed',
+        recurrence_type VARCHAR(20) DEFAULT 'none',
+        recurrence_end_date DATE,
+        parent_booking_id INT,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `;
+
+    try {
+      await sql`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS recurrence_type VARCHAR(20) DEFAULT 'none';`;
+      await sql`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS recurrence_end_date DATE;`;
+      await sql`ALTER TABLE bookings ADD COLUMN IF NOT EXISTS parent_booking_id INT;`;
+    } catch (e) {
+      // Ignore if exists
+    }
+
+    // 2b. Create audit_logs table
+    await sql`
+      CREATE TABLE IF NOT EXISTS audit_logs (
+        id SERIAL PRIMARY KEY,
+        user_id INT,
+        user_name VARCHAR(150),
+        action VARCHAR(100) NOT NULL,
+        target_type VARCHAR(50) NOT NULL,
+        target_id VARCHAR(100),
+        details TEXT,
+        ip_address VARCHAR(50),
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
 
     // Seed default Admin User if users table is empty
     const existingUsers = await sql`SELECT COUNT(*) as count FROM users;`;

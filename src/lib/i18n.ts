@@ -77,6 +77,16 @@ export const translations = {
         hospitality: "ضيافة ومشروبات",
         laptops: "أجهزة كمبيوتر محمولة"
       },
+      recurrence: "التكرار الدائم (Recurrence)",
+      recurrenceType: "نوع تكرار الحجز",
+      recurrenceEndDate: "تاريخ نهاية التكرار",
+      recurrenceOptions: {
+        none: "بدون تكرار (حجز لمرة واحدة)",
+        daily: "يومياً (Daily)",
+        weekly: "أسبوعياً (Weekly)",
+        biweekly: "كل أسبوعين (Bi-weekly)",
+        monthly: "شهرياً (Monthly)"
+      },
       notes: "ملاحظات إضافية",
       notesPlaceholder: "أي متطلبات خاصة أو ملاحظات للدعم الفني والسكرتارية...",
       conflictWarning: "تنبيه تضارب: توجد قاعة محجوزة بالفعل في هذا الموعد! يرجى اختيار وقت آخر أو قاعة أخرى.",
@@ -270,6 +280,16 @@ export const translations = {
         videoconf: "Video Conferencing System",
         hospitality: "Hospitality & Refreshments",
         laptops: "Laptops / Training Devices"
+      },
+      recurrence: "Recurring Booking",
+      recurrenceType: "Recurrence Type",
+      recurrenceEndDate: "Recurrence End Date",
+      recurrenceOptions: {
+        none: "One-time Booking (No Recurrence)",
+        daily: "Daily",
+        weekly: "Weekly",
+        biweekly: "Bi-weekly",
+        monthly: "Monthly"
       },
       notes: "Additional Notes",
       notesPlaceholder: "Any special setup instructions for IT & Secretariat...",

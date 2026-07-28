@@ -39,6 +39,8 @@ export const BookingModal: React.FC<BookingModalProps> = ({
   const [attendeesCount, setAttendeesCount] = useState(10);
   const [requestedEquipment, setRequestedEquipment] = useState<string[]>(['projector']);
   const [notes, setNotes] = useState('');
+  const [recurrenceType, setRecurrenceType] = useState<'none' | 'daily' | 'weekly' | 'biweekly' | 'monthly'>('none');
+  const [recurrenceEndDate, setRecurrenceEndDate] = useState('');
 
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -58,16 +60,18 @@ export const BookingModal: React.FC<BookingModalProps> = ({
       setStartTime(initialStartTime);
       const [h, m] = initialStartTime.split(':').map(Number);
       const endH = Math.min(h + 2, 18);
-      setEndTime(`${endH.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`);
+      setEndTime(`${String(endH).padStart(2, '0')}:00`);
     }
-  }, [initialRoomId, initialDate, initialStartTime]);
+  }, [initialRoomId, initialDate, initialStartTime, isOpen]);
 
   if (!isOpen) return null;
 
-  const toggleEquipment = (eq: string) => {
-    setRequestedEquipment(prev =>
-      prev.includes(eq) ? prev.filter(item => item !== eq) : [...prev, eq]
-    );
+  const toggleEquipment = (itemKey: string) => {
+    if (requestedEquipment.includes(itemKey)) {
+      setRequestedEquipment(requestedEquipment.filter(k => k !== itemKey));
+    } else {
+      setRequestedEquipment([...requestedEquipment, itemKey]);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -91,7 +95,9 @@ export const BookingModal: React.FC<BookingModalProps> = ({
           end_time: endTime,
           attendees_count: attendeesCount,
           requested_equipment: requestedEquipment,
-          notes
+          notes,
+          recurrence_type: recurrenceType,
+          recurrence_end_date: recurrenceType !== 'none' ? recurrenceEndDate : null
         })
       });
 
@@ -372,6 +378,47 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   </button>
                 );
               })}
+            </div>
+          </div>
+
+          {/* Recurrence Settings */}
+          <div className="p-4 rounded-2xl bg-[var(--input-bg)] border border-[var(--stroke)]">
+            <h4 className="text-xs font-bold text-[var(--text)] mb-3 flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-[var(--blue)]" />
+              {t.modal.recurrence || 'التكرار الدائم (Recurrence)'}
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[11px] font-mono text-[var(--text-dim)] mb-1">
+                  {t.modal.recurrenceType || 'نوع التكرار'}
+                </label>
+                <select
+                  value={recurrenceType}
+                  onChange={(e: any) => setRecurrenceType(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl glass-input text-xs font-mono"
+                >
+                  <option value="none">{t.modal.recurrenceOptions?.none || 'بدون تكرار'}</option>
+                  <option value="daily">{t.modal.recurrenceOptions?.daily || 'يومياً'}</option>
+                  <option value="weekly">{t.modal.recurrenceOptions?.weekly || 'أسبوعياً'}</option>
+                  <option value="biweekly">{t.modal.recurrenceOptions?.biweekly || 'كل أسبوعين'}</option>
+                  <option value="monthly">{t.modal.recurrenceOptions?.monthly || 'شهرياً'}</option>
+                </select>
+              </div>
+
+              {recurrenceType !== 'none' && (
+                <div>
+                  <label className="block text-[11px] font-mono text-[var(--text-dim)] mb-1">
+                    {t.modal.recurrenceEndDate || 'تاريخ نهاية التكرار'}
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={recurrenceEndDate}
+                    onChange={(e) => setRecurrenceEndDate(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl glass-input text-xs font-mono"
+                  />
+                </div>
+              )}
             </div>
           </div>
 

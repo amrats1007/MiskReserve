@@ -63,8 +63,53 @@ export async function GET(request: Request) {
   }
 }
 
+import { checkRateLimit } from '@/lib/rateLimit';
+import { logAudit } from '@/lib/audit';
+import { sendNotification } from '@/lib/notifications';
+
+function generateRecurrenceDates(startDateStr: string, recurrenceType?: string, endDateStr?: string): string[] {
+  if (!recurrenceType || recurrenceType === 'none' || !endDateStr) {
+    return [startDateStr];
+  }
+
+  const dates: string[] = [];
+  let current = new Date(startDateStr);
+  const endDate = new Date(endDateStr);
+
+  // Safety cap of max 30 recurring instances per request
+  let count = 0;
+
+  while (current <= endDate && count < 30) {
+    dates.push(current.toISOString().split('T')[0]);
+    count++;
+
+    if (recurrenceType === 'daily') {
+      current.setDate(current.getDate() + 1);
+    } else if (recurrenceType === 'weekly') {
+      current.setDate(current.getDate() + 7);
+    } else if (recurrenceType === 'biweekly') {
+      current.setDate(current.getDate() + 14);
+    } else if (recurrenceType === 'monthly') {
+      current.setMonth(current.getMonth() + 1);
+    } else {
+      break;
+    }
+  }
+
+  return dates.length > 0 ? dates : [startDateStr];
+}
+
 export async function POST(request: Request) {
   try {
+    const ip = request.headers.get('x-forwarded-for') || '127.0.0.1';
+    const rateCheck = checkRateLimit(`booking_create:${ip}`, 15, 60000);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { success: false, message: 'تم تجاوز كثرة طلبات الحجز. يرجى الانتظار دقيقة.' },
+        { status: 429 }
+      );
+    }
+
     const auth = await checkAuthSession();
     if (!auth.authenticated) {
       return NextResponse.json({ success: false, message: 'غير مصرح بالحجز إلا للحسابات المسجلة والمفعلة.' }, { status: 401 });
@@ -84,7 +129,9 @@ export async function POST(request: Request) {
       end_time,
       attendees_count,
       requested_equipment,
-      notes
+      notes,
+      recurrence_type,
+      recurrence_end_date
     } = body;
 
     // Validation & Length Sanitization
@@ -97,39 +144,86 @@ export async function POST(request: Request) {
     const cleanEventTitle = String(event_title).trim().substring(0, 200);
     const cleanNotes = notes ? String(notes).trim().substring(0, 1000) : null;
 
-    // CONFLICT DETECTION ENGINE
-    const conflicts = await sql`
-      SELECT id, event_title, booker_name, start_time, end_time
-      FROM bookings
-      WHERE room_id = ${parseInt(room_id)}
-        AND booking_date = ${booking_date}::date
-        AND status != 'cancelled'
-        AND (start_time < ${end_time}::time AND end_time > ${start_time}::time);
-    `;
+    const targetDates = generateRecurrenceDates(booking_date, recurrence_type, recurrence_end_date);
 
-    if (conflicts.length > 0) {
-      return NextResponse.json({
-        success: false,
-        conflict: true,
-        conflictingBooking: conflicts[0],
-        message: 'Conflict detected: The room is already booked for the selected time interval.'
-      }, { status: 409 });
+    // CONFLICT DETECTION ENGINE FOR ALL TARGET DATES
+    for (const tDate of targetDates) {
+      const conflicts = await sql`
+        SELECT id, event_title, booker_name, start_time, end_time, booking_date
+        FROM bookings
+        WHERE room_id = ${parseInt(room_id)}
+          AND booking_date = ${tDate}::date
+          AND status != 'cancelled'
+          AND (start_time < ${end_time}::time AND end_time > ${start_time}::time);
+      `;
+
+      if (conflicts.length > 0) {
+        return NextResponse.json({
+          success: false,
+          conflict: true,
+          conflictingBooking: conflicts[0],
+          message: `Conflict detected on date ${tDate}: The room is already booked.`
+        }, { status: 409 });
+      }
     }
 
-    const result = await sql`
+    // Insert primary parent booking
+    const primaryResult = await sql`
       INSERT INTO bookings (
         room_id, booker_name, booker_email, booker_phone, entity_name,
         event_title, event_type, booking_date, start_time, end_time,
-        attendees_count, requested_equipment, notes, status
+        attendees_count, requested_equipment, notes, status,
+        recurrence_type, recurrence_end_date
       ) VALUES (
         ${parseInt(room_id)}, ${cleanBookerName}, ${booker_email || auth.user?.email || null}, ${booker_phone || null}, ${cleanEntityName},
-        ${cleanEventTitle}, ${event_type || 'meeting'}, ${booking_date}::date, ${start_time}::time, ${end_time}::time,
-        ${parseInt(attendees_count) || 1}, ${JSON.stringify(requested_equipment || [])}::jsonb, ${cleanNotes}, 'confirmed'
+        ${cleanEventTitle}, ${event_type || 'meeting'}, ${targetDates[0]}::date, ${start_time}::time, ${end_time}::time,
+        ${parseInt(attendees_count) || 1}, ${JSON.stringify(requested_equipment || [])}::jsonb, ${cleanNotes}, 'confirmed',
+        ${recurrence_type || 'none'}, ${recurrence_end_date ? recurrence_end_date : null}
       )
       RETURNING *;
     `;
 
-    return NextResponse.json({ success: true, booking: result[0] });
+    const parentBooking = primaryResult[0];
+
+    // Insert recurring child instances if any
+    for (let i = 1; i < targetDates.length; i++) {
+      await sql`
+        INSERT INTO bookings (
+          room_id, booker_name, booker_email, booker_phone, entity_name,
+          event_title, event_type, booking_date, start_time, end_time,
+          attendees_count, requested_equipment, notes, status,
+          recurrence_type, recurrence_end_date, parent_booking_id
+        ) VALUES (
+          ${parseInt(room_id)}, ${cleanBookerName}, ${booker_email || auth.user?.email || null}, ${booker_phone || null}, ${cleanEntityName},
+          ${cleanEventTitle}, ${event_type || 'meeting'}, ${targetDates[i]}::date, ${start_time}::time, ${end_time}::time,
+          ${parseInt(attendees_count) || 1}, ${JSON.stringify(requested_equipment || [])}::jsonb, ${cleanNotes}, 'confirmed',
+          ${recurrence_type || 'none'}, ${recurrence_end_date ? recurrence_end_date : null}, ${parentBooking.id}
+        );
+      `;
+    }
+
+    await logAudit({
+      userId: auth.user?.id,
+      userName: auth.user?.name,
+      action: 'BOOKING_CREATE',
+      targetType: 'BOOKING',
+      targetId: parentBooking.id,
+      details: `Booking created for ${cleanEventTitle} in Room ${room_id} (${targetDates.length} instances)`,
+      ipAddress: ip
+    });
+
+    const userEmail = booker_email || auth.user?.email;
+    if (userEmail) {
+      await sendNotification({
+        to: userEmail,
+        subject: `تأكيد حجز القاعة - ${cleanEventTitle}`,
+        body: `تم تأكيد حجز القاعة بنجاح بتاريخ ${booking_date} من ${start_time} إلى ${end_time}.`,
+        type: 'booking_created',
+        metadata: { bookingId: parentBooking.id }
+      });
+    }
+
+    return NextResponse.json({ success: true, booking: parentBooking, instancesCount: targetDates.length });
   } catch (error: any) {
     console.error('Create Booking Error:', error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });

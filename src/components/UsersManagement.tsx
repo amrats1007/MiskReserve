@@ -5,6 +5,9 @@ import { useLanguage } from '@/context/LanguageContext';
 import { User } from '@/lib/types';
 import { Users, CheckCircle, XCircle, Trash2, Clock, Search, Shield, AlertCircle, RefreshCw } from 'lucide-react';
 
+import { AuditLogModal } from '@/components/AuditLogModal';
+import { ShieldCheck } from 'lucide-react';
+
 export const UsersManagement: React.FC = () => {
   const { lang, t } = useLanguage();
   const [users, setUsers] = useState<User[]>([]);
@@ -12,6 +15,7 @@ export const UsersManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('pending');
   const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -94,13 +98,23 @@ export const UsersManagement: React.FC = () => {
           <p className="text-xs text-[var(--text-dim)] mt-1 font-sans">{t.users.subtitle}</p>
         </div>
 
-        <button
-          onClick={fetchUsers}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--input-bg)] hover:bg-[var(--stroke)] border border-[var(--stroke)] text-[var(--text)] text-xs font-mono font-medium transition-all"
-        >
-          <RefreshCw className={`w-4 h-4 text-[var(--blue)] ${loading ? 'animate-spin' : ''}`} />
-          <span>{t.users.refresh}</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsAuditModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[rgba(99,102,241,0.15)] hover:bg-[rgba(99,102,241,0.25)] border border-[rgba(99,102,241,0.3)] text-[var(--blue)] text-xs font-mono font-bold transition-all shadow-md"
+          >
+            <ShieldCheck className="w-4 h-4" />
+            <span>{lang === 'ar' ? 'سجل التدقيق والأمان' : 'Audit Logs'}</span>
+          </button>
+
+          <button
+            onClick={fetchUsers}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--input-bg)] hover:bg-[var(--stroke)] border border-[var(--stroke)] text-[var(--text)] text-xs font-mono font-medium transition-all"
+          >
+            <RefreshCw className={`w-4 h-4 text-[var(--blue)] ${loading ? 'animate-spin' : ''}`} />
+            <span>{t.users.refresh}</span>
+          </button>
+        </div>
       </div>
 
       {/* Quick Status Badges Filter */}
@@ -303,6 +317,11 @@ export const UsersManagement: React.FC = () => {
           </table>
         </div>
       </div>
+
+      <AuditLogModal
+        isOpen={isAuditModalOpen}
+        onClose={() => setIsAuditModalOpen(false)}
+      />
 
     </div>
   );

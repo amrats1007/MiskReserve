@@ -14,6 +14,7 @@ import { EditBookingModal } from '@/components/EditBookingModal';
 import { AuthModal } from '@/components/AuthModal';
 import { UsersManagement } from '@/components/UsersManagement';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { SkeletonTable } from '@/components/Skeleton';
 import { UserCheck, KeyRound, CheckCircle2, AlertTriangle, Check } from 'lucide-react';
 
 export default function Home() {
@@ -272,10 +273,7 @@ export default function Home() {
 
           {/* Main Content Area */}
           {loading ? (
-            <div className="glass-panel rounded-3xl p-12 text-center text-[var(--text-dim)]">
-              <div className="w-8 h-8 border-2 border-[var(--blue)] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-xs font-mono">LOADING ROOMS & SCHEDULE DATA…</p>
-            </div>
+            <SkeletonTable />
           ) : (
             <>
               {activeTab === 'calendar' && (
