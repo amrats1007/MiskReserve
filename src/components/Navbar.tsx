@@ -56,7 +56,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setActiveTab('calendar')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-300 ${
                 activeTab === 'calendar'
-                  ? 'bg-gradient-to-r from-[var(--blue)] via-[var(--violet)] to-[var(--cyan)] text-[#07080B] font-bold shadow-lg'
+                  ? 'bg-gradient-to-r from-[var(--blue)] via-[var(--violet)] to-[var(--cyan)] text-[var(--bg)] font-bold shadow-lg'
                   : 'text-[var(--text-dim)] hover:text-[var(--text)] hover:bg-[var(--stroke)]'
               }`}
             >
@@ -68,7 +68,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setActiveTab('logbook')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-300 ${
                 activeTab === 'logbook'
-                  ? 'bg-gradient-to-r from-[var(--blue)] via-[var(--violet)] to-[var(--cyan)] text-[#07080B] font-bold shadow-lg'
+                  ? 'bg-gradient-to-r from-[var(--blue)] via-[var(--violet)] to-[var(--cyan)] text-[var(--bg)] font-bold shadow-lg'
                   : 'text-[var(--text-dim)] hover:text-[var(--text)] hover:bg-[var(--stroke)]'
               }`}
             >
@@ -80,7 +80,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setActiveTab('rooms')}
               className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-300 ${
                 activeTab === 'rooms'
-                  ? 'bg-gradient-to-r from-[var(--blue)] via-[var(--violet)] to-[var(--cyan)] text-[#07080B] font-bold shadow-lg'
+                  ? 'bg-gradient-to-r from-[var(--blue)] via-[var(--violet)] to-[var(--cyan)] text-[var(--bg)] font-bold shadow-lg'
                   : 'text-[var(--text-dim)] hover:text-[var(--text)] hover:bg-[var(--stroke)]'
               }`}
             >
@@ -94,7 +94,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => setActiveTab('users')}
                 className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-300 ${
                   activeTab === 'users'
-                    ? 'bg-gradient-to-r from-[var(--blue)] via-[var(--violet)] to-[var(--cyan)] text-[#07080B] font-bold shadow-lg'
+                    ? 'bg-gradient-to-r from-[var(--blue)] via-[var(--violet)] to-[var(--cyan)] text-[var(--bg)] font-bold shadow-lg'
                     : 'text-[var(--cyan)] bg-[rgba(103,232,249,0.08)] hover:bg-[rgba(103,232,249,0.15)] border border-[rgba(103,232,249,0.3)]'
                 }`}
               >

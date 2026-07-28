@@ -64,7 +64,7 @@ export default function Home() {
 
     } catch (err) {
       console.error('Error loading data:', err);
-    } fontally: {
+    } finally {
       setLoading(false);
     }
   }, [user]);
